@@ -1,0 +1,10 @@
+# Python related stuff
+__pycache__/
+.venv/
+*.pyc
+
+# config files
+.env.*
+
+# Pycharm
+.idea/
