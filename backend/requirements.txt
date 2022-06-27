@@ -1,11 +1,17 @@
 alembic==1.8.0
 asyncpg==0.25.0
+<<<<<<< HEAD
 dependency-injector==4.39.1
+=======
+>>>>>>> c91486a3719d20157b4e5cb1cd790b007657500b
 fastapi-mail==1.0.9
 fastapi==0.78.0
 passlib[bcrypt]==1.7.4
 psycopg2-binary==2.9.3
 PyJWT==2.4.0
+<<<<<<< HEAD
 PyYAML==6.0
+=======
+>>>>>>> c91486a3719d20157b4e5cb1cd790b007657500b
 sqlmodel==0.0.6
 uvicorn==0.18.1
