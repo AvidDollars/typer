@@ -1,0 +1,7 @@
+Alembic migrations:
+- initialization with async template
+  - cmd: alembic init -t async migrations
+- generating migration:
+  - cmd: alembic revision --autogenerate -m "message"
+- applying migration:
+  - cmd: alembic upgrade head
