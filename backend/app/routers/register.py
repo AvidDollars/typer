@@ -1,10 +1,16 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from ..services import AbstractEmailService
+from dependency_injector.wiring import inject, Provide
+from ..containers import Container
 
 router = APIRouter(
-    prefix="/register"
+    prefix="/register",
 )
 
 
 @router.get("/")
-async def register_user():
-    ...
+@inject
+async def register_user(
+        email_service: AbstractEmailService = Depends(Provide[Container.email_service])
+):
+    await email_service.simple_send()
