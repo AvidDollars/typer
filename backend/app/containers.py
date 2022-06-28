@@ -6,7 +6,7 @@ from dependency_injector.providers import Configuration, Singleton, Resource, Fa
 from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
 from .db import Database
 from .logger import get_logger
-from .services import EmailService
+from .services import UserRegistrationEmailService
 
 
 class Container(DeclarativeContainer):
@@ -36,8 +36,7 @@ class Container(DeclarativeContainer):
     )
 
     # SERVICES
-    email_service = Factory(
-        EmailService,
+    user_registration_email_service = Factory(
+        UserRegistrationEmailService,
         email_config=config.smtp,
-        logger=logger
     )
