@@ -24,5 +24,7 @@ async def log_server_errors(
 def validation_error_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
-        content={"error": exc.errors()[0]["msg"]}
+        content={
+            "error": exc.errors()[0]["type"],
+            "message": exc.errors()[0]["msg"]}
     )
