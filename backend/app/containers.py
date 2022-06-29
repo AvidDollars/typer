@@ -2,20 +2,19 @@ from os import path
 
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
 from dependency_injector.providers import Configuration, Singleton, Resource, Factory
+from passlib.hash import argon2
 
 from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
 from .db import Database
 from .logger import get_logger
-from .services import UserRegistrationEmailService
+from .services import UserRegistrationEmailService, UserService, HashingService
 
 
 class Container(DeclarativeContainer):
-    """
-    dependency injection container
-    """
+    """ dependency injection container """
 
     # WIRING CONFIG
-    wiring_config = WiringConfiguration(packages=[".routers"])
+    wiring_config = WiringConfiguration(packages=[".routers", ".middleware"])
 
     # CONFIG
     config = Configuration(yaml_files=[path.join(APP_DIR, CONFIG_FILE_NAME)])
@@ -39,4 +38,15 @@ class Container(DeclarativeContainer):
     user_registration_email_service = Factory(
         UserRegistrationEmailService,
         email_config=config.smtp,
+    )
+
+    user_service = Factory(
+        UserService,
+        db=db
+    )
+
+    hashing_service = Singleton(
+        HashingService,
+        algorithm=argon2,
+        pepper=config.pepper
     )
