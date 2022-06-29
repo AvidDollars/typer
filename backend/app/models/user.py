@@ -6,6 +6,7 @@ from sqlmodel import SQLModel, Field
 
 from .enums import UserRole
 from ..constants import EMAIL_VALIDATOR_REGEX
+from ..utils.validators import at_least_one_uppercase_and_one_digit_password
 
 
 class UserBase(SQLModel):
@@ -21,6 +22,14 @@ class UserBase(SQLModel):
 
 class UserIn(UserBase):
     password: str
+
+    @validator("password")
+    def must_be_strong_password(cls, password):
+        validation_result = at_least_one_uppercase_and_one_digit_password(password)
+
+        if validation_result["valid"]:
+            return password
+        raise ValueError(validation_result["message"])
 
 
 class UserDb(UserIn, table=True):
