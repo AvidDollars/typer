@@ -19,6 +19,8 @@ def is_strong_password(
         min_length: int,
         error_msg_if_fail_over_validators: str) -> dict[str, str | bool]:
 
+    validators_dict = dict(validators_dict)
+
     if len(input_) < min_length:
         return {
             "valid": False,
@@ -31,7 +33,7 @@ def is_strong_password(
                 validators_dict[validator] -= 1  # character went over validation successfully
 
     # not enough characters went over validation successfully
-    if sum(validators_dict.values()) > 0:
+    if any(num > 0 for num in validators_dict.values()):
         return {
             "valid": False,
             "message": error_msg_if_fail_over_validators
