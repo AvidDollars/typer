@@ -3,8 +3,7 @@ from fastapi import APIRouter, Depends
 
 from ..containers import Container
 from ..models.user import UserIn
-from ..services import AbstractEmailService, AbstractHashingService
-
+from ..services import UserRegistrationEmailService, UserService
 
 router = APIRouter(
     prefix="/register",
@@ -15,8 +14,9 @@ router = APIRouter(
 @inject
 async def register_user(
         user: UserIn,
-        email_service: AbstractEmailService = Depends(Provide[Container.user_registration_email_service]),
-        hashing_service: AbstractHashingService = Depends(Provide[Container.hashing_service])
+        user_service: UserService = Depends(Provide[Container.user_service]),
+        email_service: UserRegistrationEmailService = Depends(Provide[Container.user_registration_email_service]),
 ):
-    ...
-    #await email_service.simple_send(recipient=user.email)
+    activation_token = await user_service.save_user(user)
+    await email_service.registration_email(recipient=user.email, activation_token=activation_token)
+    return {"message": "email sent"}
