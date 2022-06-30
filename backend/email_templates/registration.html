@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+    <body>
+        <h1>User Registration Information</h1>
+        <h3>to complete the registration, visit the URL below:</h3>
+        <button>
+            <a
+                target="_blank"
+                href="{{ ''.join(['http://localhost:8000/activate/', activation_token]) }}"
+            >
+                activate account (link is active for 24 hours)
+            </a>
+        </button>
+    </body>
+</html>
