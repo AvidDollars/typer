@@ -7,6 +7,7 @@ from passlib.hash import argon2
 from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
 from .db import Database
 from .logger import get_logger
+from .repositories import UserRepository
 from .services import UserRegistrationEmailService, UserService, HashingService
 
 
@@ -34,19 +35,26 @@ class Container(DeclarativeContainer):
         environment=config.environment
     )
 
+    # REPOSITORIES
+    user_repository = Factory(
+        UserRepository,
+        db=db
+    )
+
     # SERVICES
     user_registration_email_service = Factory(
         UserRegistrationEmailService,
         email_config=config.smtp,
     )
 
-    user_service = Factory(
-        UserService,
-        db=db
-    )
-
     hashing_service = Singleton(
         HashingService,
         algorithm=argon2,
         pepper=config.pepper
+    )
+
+    user_service = Factory(
+        UserService,
+        hashing_service=hashing_service,
+        repository=user_repository
     )
