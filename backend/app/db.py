@@ -16,13 +16,12 @@ class Database:
         async with self._engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
 
-    async def session(self):
+    async def get_session(self):
         async_session = sessionmaker(
             self._engine,
             class_=AsyncSession,
             expire_on_commit=False
         )
 
-        with async_session() as session:
-            yield session
-
+        async with async_session() as session:
+            return session
