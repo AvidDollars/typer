@@ -56,11 +56,10 @@ class EmailService(AbstractEmailService):
 
 class UserRegistrationEmailService(EmailService):
 
-    # method signature is overridden
-    async def simple_send(self, *, recipient: EmailStr):
+    async def registration_email(self, *, recipient: EmailStr, activation_token: str):
         await super().simple_send(
             subject="user registration",
             recipients=[recipient],
-            content={"title": "user", "heading": "registration"},
+            content={"title": "user registration", "activation_token": activation_token},
             template_name=REGISTER_TEMPLATE_FILE_NAME
         )
