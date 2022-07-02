@@ -2,8 +2,9 @@ import re
 from functools import partial
 from typing import Callable
 
+from ..constants import EMAIL_VALIDATOR_REGEX
 
-__all__ = ("at_least_one_uppercase_and_one_digit_password",)
+__all__ = ("at_least_one_uppercase_and_one_digit_password", "email_validator")
 
 
 def check_against_pattern(input_: str, *, pattern: str) -> bool:
@@ -12,6 +13,12 @@ def check_against_pattern(input_: str, *, pattern: str) -> bool:
 
 is_uppercase = partial(check_against_pattern, pattern="[A-Z]")
 is_digit = partial(check_against_pattern, pattern=r"\d")
+
+
+def email_validator(email: str) -> str:
+    if re.search(EMAIL_VALIDATOR_REGEX, email):
+        return email
+    raise ValueError("invalid email")
 
 
 def is_strong_password(

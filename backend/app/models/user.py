@@ -1,13 +1,12 @@
 import re
 from datetime import datetime
 
-from pydantic import validator
+from pydantic import validator, BaseModel
 from sqlmodel import SQLModel, Field
 
 from .enums import UserRole
-from ..constants import EMAIL_VALIDATOR_REGEX
 from ..utils.helpers import generate_registration_token
-from ..utils.validators import at_least_one_uppercase_and_one_digit_password
+from ..utils.validators import at_least_one_uppercase_and_one_digit_password, email_validator
 
 
 class UserBase(SQLModel):
@@ -23,11 +22,15 @@ class UserBase(SQLModel):
 
         return name
 
-    @validator("email")
-    def must_be_valid_email(cls, email):
-        if re.search(EMAIL_VALIDATOR_REGEX, email):
-            return email
-        raise ValueError("invalid email")
+    _validate_email = validator("email", allow_reuse=True)(email_validator)
+
+
+class UserLogin(BaseModel):
+    name: str | None
+    email: str | None
+    password: str
+
+    _validate_email = validator("email", allow_reuse=True)(email_validator)
 
 
 class UserIn(UserBase):
