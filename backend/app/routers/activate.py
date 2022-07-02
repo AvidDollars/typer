@@ -5,13 +5,13 @@ from ..containers import Container
 from ..services import UserService
 
 router = APIRouter(
-    prefix="/activate",
+    prefix="/activate", tags=["Auth"]
 )
 
 
 @router.get("/{activation_token}")
 @inject
-async def register_user(
+async def activate_user(
         activation_token: str,
         user_service: UserService = Depends(Provide[Container.user_service]),
 ):

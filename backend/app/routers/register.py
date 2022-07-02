@@ -6,7 +6,7 @@ from ..models.user import UserIn
 from ..services import UserRegistrationEmailService, UserService
 
 router = APIRouter(
-    prefix="/register",
+    prefix="/register", tags=["Auth"]
 )
 
 
@@ -17,6 +17,9 @@ async def register_user(
         user_service: UserService = Depends(Provide[Container.user_service]),
         email_service: UserRegistrationEmailService = Depends(Provide[Container.user_registration_email_service]),
 ):
-    activation_token = await user_service.save_user(user)
+
+    # activation_token is returned if unique constraint is not violated (name, email)
+    activation_token = await user_service.register_user(user)
+
     await email_service.registration_email(recipient=user.email, activation_token=activation_token)  # noqa
     return {"message": "email sent"}
