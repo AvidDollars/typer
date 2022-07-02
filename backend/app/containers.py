@@ -8,7 +8,7 @@ from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
 from .db import Database
 from .logger import get_logger
 from .repositories import UserRepository
-from .services import UserRegistrationEmailService, UserService, HashingService
+from .services import UserRegistrationEmailService, UserService, HashingService, AuthService
 
 
 class Container(DeclarativeContainer):
@@ -54,8 +54,15 @@ class Container(DeclarativeContainer):
         pepper=config.pepper
     )
 
+    auth_service = Factory(
+        AuthService,
+        secret=config.secret,
+        token_expiration=config.jwt_token_expiration_in_hours
+    )
+
     user_service = Factory(
         UserService,
         hashing_service=hashing_service,
+        auth_service=auth_service,
         repository=user_repository
     )
