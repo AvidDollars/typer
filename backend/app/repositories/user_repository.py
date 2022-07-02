@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
+from .crud_operations import CrudOperations
 from ..constants import UNIQUE_CONSTRAINT_VIOLATED
 from ..db import Database
 from ..models.user import UserDb
@@ -10,38 +11,33 @@ from ..utils import timedelta_is_less_than
 __all__ = ("UserRepository", )
 
 
-class UserRepository:
+class UserRepository(CrudOperations):
     def __init__(self, *, db: Database, registration_token_expiration: int):
-        self.db = db
+        super().__init__(db=db)
         self.registration_token_expiration = registration_token_expiration
 
-    async def save_user(self, user: UserDb) -> str:
-        session = await self.db.get_session()
+    async def register_user(self, user: UserDb) -> str:
+        try:
+            await self.create_resource(user)
+            return user.activation_link
 
-        async with session.begin():
-            session.add(user)
+        except IntegrityError as error:
+            if error.orig.sqlstate == UNIQUE_CONSTRAINT_VIOLATED:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="user is already registered"
+                )
 
-            try:
-                await session.commit()
-                return user.activation_link
-
-            except IntegrityError as error:
-                if error.orig.sqlstate == UNIQUE_CONSTRAINT_VIOLATED:
-                    raise HTTPException(
-                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail="user is already registered"
-                    )
-
-                else:
-                    raise  # unexpected error... will be logged
+            else:
+                raise  # unexpected error... will be logged
 
     async def activate_user(self, activation_token: str) -> dict[str, str]:
         session = await self.db.get_session()
 
         async with session.begin():
-            stmt = (select(UserDb).filter(UserDb.activation_link == activation_token))
-            result = (await session.execute(stmt)).scalars().all()
-            user = result and result[0]
+            stmt = select(UserDb).filter(UserDb.activation_link == activation_token)
+
+            user = (await session.execute(stmt)).scalars().first()
 
             # activation token is not present in a database
             if not user:
