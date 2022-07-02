@@ -1,5 +1,5 @@
-from ..models.user import UserDb, UserIn
 from . import hashing_service
+from ..models.user import UserDb, UserIn
 
 __all__ = ("UserService", )
 
@@ -20,3 +20,7 @@ class UserService:
 
         activation_link = await self.repository.save_user(userDb)
         return activation_link
+
+    async def activate_user(self, activation_token: str):
+        result = await self.repository.activate_user(activation_token)
+        return result
