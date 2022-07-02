@@ -38,6 +38,7 @@ class Container(DeclarativeContainer):
     # REPOSITORIES
     user_repository = Factory(
         UserRepository,
+        registration_token_expiration=config.registration_token_expiration_in_hours,
         db=db
     )
 

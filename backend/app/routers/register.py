@@ -18,5 +18,5 @@ async def register_user(
         email_service: UserRegistrationEmailService = Depends(Provide[Container.user_registration_email_service]),
 ):
     activation_token = await user_service.save_user(user)
-    await email_service.registration_email(recipient=user.email, activation_token=activation_token)
+    await email_service.registration_email(recipient=user.email, activation_token=activation_token)  # noqa
     return {"message": "email sent"}
