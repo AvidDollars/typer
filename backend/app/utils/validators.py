@@ -3,6 +3,9 @@ from functools import partial
 from typing import Callable
 
 
+__all__ = ("at_least_one_uppercase_and_one_digit_password",)
+
+
 def check_against_pattern(input_: str, *, pattern: str) -> bool:
     return re.match(pattern, input_) is not None
 
