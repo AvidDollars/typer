@@ -1,5 +1,5 @@
 from .hashing_service import AbstractHashingService
-from .auth_service import AuthService
+from .auth_service import JwtToken
 from ..models.user import UserDb, UserIn, UserLogin
 from fastapi import HTTPException, status
 
@@ -10,11 +10,11 @@ class UserService:
     def __init__(
             self, *,
             hashing_service: AbstractHashingService,
-            auth_service: AuthService,
+            jwt_token: JwtToken,
             repository
     ):
         self.hashing_service = hashing_service
-        self.auth_service = auth_service
+        self.jwt_token = jwt_token
         self.repository = repository
 
     async def register_user(self, user: UserIn):
@@ -40,7 +40,7 @@ class UserService:
             raise invalid_credentials_err
 
         if self._login_approved(user, user_db, message_if_password_mismatch=invalid_credentials_err):
-            return self.auth_service.encode_jwt_token({
+            return self.jwt_token.encode({
                 "role": user_db.role,
                 "id": user_db.id
             })
