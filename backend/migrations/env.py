@@ -9,7 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel import SQLModel
 
 from app.main import app
+
+# ↓↓↓ must be present, so that migration will create a new table in database ↓↓↓
 from app.models import user
+from app.models import text
 
 
 # this is the Alembic Config object, which provides
