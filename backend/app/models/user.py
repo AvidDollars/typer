@@ -1,7 +1,8 @@
 import re
 from datetime import datetime
+from uuid import uuid4
 
-from pydantic import validator, BaseModel
+from pydantic import validator, BaseModel, UUID4
 from sqlmodel import SQLModel, Field
 
 from .enums import UserRole
@@ -49,7 +50,7 @@ class UserDb(UserIn, table=True):
 
     __tablename__ = "users"
 
-    id: int | None = Field(default=None, primary_key=True, nullable=False)
+    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4)
     role: UserRole = Field(default=UserRole.user, nullable=False)
     created_at: datetime = Field(default_factory=datetime.now)
     email_subscription: bool = True
