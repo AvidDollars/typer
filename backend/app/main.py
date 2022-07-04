@@ -7,15 +7,14 @@ from .routers import router
 
 
 def create_app() -> FastAPI:
+    container = Container()
+    config = container.config()
 
-    app = FastAPI()
+    app = FastAPI(title=config["project_name"])
+    app.container = container
     app.include_router(router)
-
     app.middleware("http")(log_server_errors)
     app.exception_handler(RequestValidationError)(validation_error_handler)
-
-    container = Container()
-    app.container = container
 
     return app
 
