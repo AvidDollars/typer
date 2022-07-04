@@ -7,8 +7,8 @@ from passlib.hash import argon2
 from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
 from .db import Database
 from .logger import get_logger
-from .repositories import UserRepository
-from .services import UserRegistrationEmailService, UserService, HashingService, JwtToken
+from .repositories import UserRepository, TextRepository
+from .services import UserRegistrationEmailService, UserService, HashingService, JwtToken, TextService
 
 
 class Container(DeclarativeContainer):
@@ -42,6 +42,11 @@ class Container(DeclarativeContainer):
         db=db
     )
 
+    text_repository = Factory(
+        TextRepository,
+        db=db
+    )
+
     # SERVICES
     user_registration_email_service = Factory(
         UserRegistrationEmailService,
@@ -66,4 +71,9 @@ class Container(DeclarativeContainer):
         hashing_service=hashing_service,
         jwt_token=jwt_token,
         repository=user_repository
+    )
+
+    text_service = Factory(
+        TextService,
+        repository=text_repository
     )
