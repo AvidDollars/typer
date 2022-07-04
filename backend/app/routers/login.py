@@ -1,10 +1,10 @@
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
+from dependency_injector.wiring import inject
 from fastapi import APIRouter, Depends, HTTPException, status
-from ..models.user import UserLogin
 
 from ..containers import Container
+from ..models.user import UserLogin
 from ..services import UserService
-
 
 router = APIRouter(
     prefix="/login", tags=["Auth"]
@@ -26,5 +26,5 @@ async def login_user(
             detail="password along with email or name must be provided"
         )
 
-    result = await user_service.login_user(user)
-    return {"token": result}
+    token = await user_service.login_user(user)
+    return {"token": token}

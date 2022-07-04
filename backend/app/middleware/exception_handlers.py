@@ -12,6 +12,8 @@ async def log_server_errors(
         call_next,
         logger=Provide[Container.logger]
 ):
+    """ will catch all unhandled exceptions """
+
     try:
         response = await call_next(request)
         return response
