@@ -40,9 +40,10 @@ class UserService:
             raise invalid_credentials_err
 
         if self._login_approved(user, user_db, message_if_password_mismatch=invalid_credentials_err):
+
             return self.jwt_token.encode({
                 "role": user_db.role,
-                "id": user_db.id
+                "id": str(user_db.id)  # TODO: custom JSONEncoder?
             })
 
     # ↓↓↓ HELPER METHODS ↓↓↓

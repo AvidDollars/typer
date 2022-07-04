@@ -31,13 +31,11 @@ class CrudOperations:
         session = await self.db.get_session()
 
         async with session.begin():
-            if filter_ is None:
-                statement = select(resource)
-            else:
-                statement = select(resource).filter(filter_)
+            statement = select(resource) \
+                if filter_ is None \
+                else select(resource).filter(filter_)
 
             call_with_method = methodcaller(method)
-
             # EXAMPLE:
             #
             # if:
@@ -48,3 +46,9 @@ class CrudOperations:
             return call_with_method(
                 (await session.execute(statement)).scalars()
             )
+
+    async def update_resource(self, resource_id: int, **fields_to_update):
+        return NotImplemented
+
+    async def delete_resource(self, resource_id: int):
+        return NotImplemented

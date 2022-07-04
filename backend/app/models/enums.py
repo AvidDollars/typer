@@ -42,7 +42,7 @@ class CompareToStrEnum(str, Enum):
     def __ne__(self, other):
         return self._compare_by_operator(other, operation="ne")
 
-    def _compare_by_operator(self, other, *, operation=Literal["eq", "lt"]):
+    def _compare_by_operator(self, other, *, operation=Literal["lt", "le", "gt", "ge", "eq", "ne"]):
         """ helper function """
 
         comparison_operation = getattr(operator, operation)
