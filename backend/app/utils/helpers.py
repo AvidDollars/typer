@@ -4,7 +4,9 @@ from functools import partial
 from secrets import token_hex
 from typing import Callable
 
-__all__ = ("generate_registration_token", "action_on_success", "timedelta_is_less_than")
+from fastapi import APIRouter
+
+__all__ = ("generate_registration_token", "action_on_success", "timedelta_is_less_than", "register_routes")
 
 
 def generate_random_hex_token(*, n_bytes: int):
@@ -50,3 +52,11 @@ def timedelta_is_less_than(dt: datetime, *, hours: int) -> bool:
     is less than provided timedelta (in hours)
     """
     return (datetime.now() - dt) < timedelta(hours=hours)
+
+
+def register_routes(router: APIRouter, *routes) -> None:
+    """
+    helper function for registering routes to APIRouter
+    """
+    for route in routes:
+        router.include_router(route)

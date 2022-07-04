@@ -1,11 +1,13 @@
 from fastapi import APIRouter
-from . import register
-from . import activate
-from . import login
+
+from . import activate, login, register, text
+from ..utils import register_routes
 
 router = APIRouter()
-router.include_router(register.router)
-router.include_router(activate.router)
-router.include_router(login.router)
+
+register_routes(
+    router,
+    register.router, activate.router, login.router, text.router
+)
 
 __all__ = (router, )
