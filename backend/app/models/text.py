@@ -9,11 +9,15 @@ from sqlmodel import SQLModel, Field
 class TextBase(SQLModel):
     name: str = Field(nullable=False)
     description: str | None
-    content: str = Field(sa_column=Column(TEXT), nullable=False)
 
 
 class TextIn(TextBase):
-    ...
+    content: str = Field(sa_column=Column(TEXT), nullable=False)
+
+
+class TextDetail(TextBase):
+    created_at: datetime
+    id: UUID4
 
 
 class TextDb(TextBase, table=True):
