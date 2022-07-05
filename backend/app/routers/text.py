@@ -5,19 +5,20 @@ from fastapi.requests import Request
 
 from ..containers import Container
 from ..models.enums import UserRole
-from ..models.text import TextIn, TextDb
+from ..models.text import TextIn, TextDb, TextDetail
 from ..services import TextService
-from ..services.auth_service import CustomHttpBearer
+from ..services.auth_service import required_authentication, optional_authentication
+from ..utils import Pagination
 
 router = APIRouter(
-    prefix="/text", tags=["Text"]
+    prefix="/texts", tags=["Text"]
 )
 
 
 @router.post(
     "/",
-    dependencies=[Depends(CustomHttpBearer())],
-    status_code=status.HTTP_201_CREATED
+    dependencies=[Depends(required_authentication)],
+    status_code=status.HTTP_201_CREATED,
 )
 @inject
 async def add_text(
@@ -34,3 +35,23 @@ async def add_text(
     text_dict["added_by"] = request.user_id
     text_db = TextDb(**text_dict)
     await text_service.insert_text(text_db)
+
+
+@router.get(
+    "",
+    dependencies=[Depends(optional_authentication)],
+    response_model=list[TextDetail]
+)
+@inject
+async def get_texts(
+        request: Request,
+        pagination: Pagination = Depends(),
+        text_service: TextService = Depends(Provide[Container.text_service])
+):
+    user_id = getattr(request, "user_id", None)
+
+    if user_id is None:  # user is not authenticated -> return all publicly available texts
+        return await text_service.get_public_texts(pagination=pagination)
+
+    else:
+        return await text_service.get_user_texts(user_id=request.user_id, pagination=pagination)
