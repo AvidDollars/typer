@@ -6,10 +6,20 @@ from fastapi.requests import Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from ..models.enums import UserRole
+from ..utils import auto_repr
 
-__all__ = ("JwtToken", "CustomHttpBearer", "is_moderator", "is_admin", "is_master_admin")
+
+__all__ = (
+    "JwtToken",
+    "is_moderator",
+    "is_admin",
+    "is_master_admin",
+    "required_authentication",
+    "optional_authentication"
+)
 
 
+@auto_repr(hide="secret")
 class JwtToken:
     def __init__(
             self, *,
@@ -43,20 +53,24 @@ class CustomHttpBearer(HTTPBearer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials:
+    async def __call__(self, request: Request) -> HTTPAuthorizationCredentials | None:
+        result = await super().__call__(request)
+
+        # auto_error is True -> authentication is optional
+        # result is None -> JWT token is not provided
+        if self.auto_error is False and result is None:
+            return result
 
         # TODO -> to be rewritten...
         from ..containers import Container  # avoiding circular import
         secret = Container().config()["secret"]  # other solutions does not work :/
-
-        result = await super().__call__(request)
 
         try:
             payload = jwt.decode(result.credentials, secret, algorithms=["HS256"])
 
             # binding "user_role" and "user_id" to the request object
             request.user_role = payload.get("role", UserRole.user)
-            request.user_id = payload.get("id", None)  # TODO: id -> UUID in database?
+            request.user_id = payload.get("id", None)
             return result
 
         except jwt.ExpiredSignatureError:
@@ -66,10 +80,19 @@ class CustomHttpBearer(HTTPBearer):
             raise HTTPException(401, "invalid token")
 
 
+required_authentication = CustomHttpBearer(auto_error=True)
+optional_authentication = CustomHttpBearer(auto_error=False)
+
+
 # to be used as dependency for ensuring authorization for accessing resources
 def ensure_role(*, required_role: UserRole, request: Request):
 
-    if required_role > request.user_role:
+    user_role_id = getattr(request, "user_role", None)
+
+    if user_role_id is None:
+        raise HTTPException(401, "not authenticated")
+
+    if required_role > UserRole(user_role_id):
         raise HTTPException(403, "not authorized")
 
 
