@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
+from ..utils import auto_repr
 
 
 __all__ = ("AbstractHashingService", "HashingService")
 
 
+@auto_repr(hide="pepper")
 class AbstractHashingService(ABC):
     def __init__(self, *, algorithm, pepper):
         self.algorithm = algorithm

@@ -6,7 +6,12 @@ from typing import Callable
 
 from fastapi import APIRouter
 
-__all__ = ("generate_registration_token", "action_on_success", "timedelta_is_less_than", "register_routes")
+__all__ = (
+    "generate_registration_token",
+    "action_on_success",
+    "timedelta_is_less_than",
+    "register_routes",
+)
 
 
 def generate_random_hex_token(*, n_bytes: int):
@@ -16,7 +21,7 @@ def generate_random_hex_token(*, n_bytes: int):
 generate_registration_token = partial(generate_random_hex_token, n_bytes=32)
 
 
-# TODO: experimental decorator...
+# TODO: experimental decorator... dont forget to add "@wraps"
 #   tobe used as:
 #       @action_on_success(send_email, email="abc.def@ghi.jkl")
 #       def some_func(...): ...

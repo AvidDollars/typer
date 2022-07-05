@@ -6,12 +6,14 @@ from .crud_operations import CrudOperations
 from ..constants import UNIQUE_CONSTRAINT_VIOLATED
 from ..db import Database
 from ..models.user import UserDb
-from ..utils import timedelta_is_less_than
+from ..utils import timedelta_is_less_than, auto_repr
 
 __all__ = ("UserRepository", )
 
 
+@auto_repr(hide="registration_token_expiration")
 class UserRepository(CrudOperations):
+
     def __init__(self, *, db: Database, registration_token_expiration: int):
         super().__init__(db=db)
         self.registration_token_expiration = registration_token_expiration

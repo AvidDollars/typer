@@ -2,10 +2,12 @@ from .hashing_service import AbstractHashingService
 from .auth_service import JwtToken
 from ..models.user import UserDb, UserIn, UserLogin
 from fastapi import HTTPException, status
+from ..utils import auto_repr
 
 __all__ = ("UserService", )
 
 
+@auto_repr(hide="jwt_token")
 class UserService:
     def __init__(
             self, *,
