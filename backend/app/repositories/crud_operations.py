@@ -4,6 +4,7 @@ from typing import Literal
 from sqlalchemy import select
 
 from ..db import Database
+from ..utils import Pagination
 
 __all__ = ("CrudOperations", )
 
@@ -26,14 +27,23 @@ class CrudOperations:
             resource,
             *,
             filter_=None,
-            method: Literal["all", "first", "one", "one_or_none"] = "first"
+            method: Literal["all", "first", "one", "one_or_none"] = "first",
+            pagination: Pagination = None  # will be used for pagination if provided
     ):
         session = await self.db.get_session()
 
         async with session.begin():
+
+            # filter
             statement = select(resource) \
                 if filter_ is None \
                 else select(resource).filter(filter_)
+
+            # pagination
+            if pagination is not None and isinstance(pagination, Pagination):
+                statement = statement. \
+                    offset(pagination.offset). \
+                    limit(pagination.limit)
 
             call_with_method = methodcaller(method)
             # EXAMPLE:
