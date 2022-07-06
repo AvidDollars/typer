@@ -13,6 +13,7 @@ from app.main import app
 # ↓↓↓ must be present, so that migration will create a new table in database ↓↓↓
 from app.models import user
 from app.models import text
+from app.models import typing_session
 
 
 # this is the Alembic Config object, which provides
