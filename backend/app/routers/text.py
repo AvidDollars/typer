@@ -2,6 +2,8 @@ from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
 from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
+from fastapi.responses import Response
+from pydantic import UUID4
 
 from ..containers import Container
 from ..models.enums import UserRole
@@ -60,3 +62,22 @@ async def get_texts(
 
     else:
         return await text_service.get_user_texts(user_id=request.user_id, pagination=pagination)
+
+
+@router.delete(
+    "/{id}",
+    dependencies=[Depends(required_authentication)]
+)
+@inject
+async def delete_text(
+        text_id: UUID4,
+        request: Request,
+        text_service: TextService = Depends(Provide[Container.text_service]),
+):
+    await text_service.delete_text(
+        text_id=text_id,
+        user_id=request.user_id,
+        user_role=UserRole(request.user_role)
+    )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

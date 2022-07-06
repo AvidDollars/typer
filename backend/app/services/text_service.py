@@ -4,6 +4,10 @@ from ..utils import Pagination
 from fastapi import HTTPException
 from ..constants import USER_TEXTS_MAX_COUNT
 from ..models.enums import UserRole
+from sqlalchemy import and_
+from pydantic import UUID4
+from fastapi import status
+
 
 __all__ = ("TextService", )
 
@@ -35,3 +39,14 @@ class TextService:
             filter_=TextDb.is_public == True,
             pagination=pagination if pagination is not None and isinstance(pagination, Pagination) else None
         )
+
+    async def delete_text(self, *, text_id: UUID4, user_id: UUID4, user_role):
+        if user_role >= UserRole.master_admin:  # only master admin can delete any resource
+            filter_ = TextDb.id == text_id
+        else:
+            filter_ = and_(TextDb.id == text_id, TextDb.added_by == user_id)
+
+        rows_deleted = await self.repository.delete_resource(TextDb, filter_=filter_)
+
+        if not rows_deleted:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
