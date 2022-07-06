@@ -20,7 +20,7 @@ class CrudOperations:
 
         async with session.begin():
             session.add(resource)
-            session.commit()
+            await session.commit()
 
     async def read_resource(
             self,
@@ -62,3 +62,16 @@ class CrudOperations:
 
     async def delete_resource(self, resource_id: int):
         return NotImplemented
+
+    # other operations
+    # TODO -> make its own dedicated class for non-crud operations?
+    async def get_count(self, resource, *, filter_=None):  # TODO: probably can be optimized
+        session = await self.db.get_session()
+
+        async with session.begin():
+            statement = select(resource) \
+                if filter_ is None \
+                else select(resource).filter(filter_)
+
+            resource_count = sum(1 for _ in (await session.execute(statement)))
+        return resource_count
