@@ -34,7 +34,12 @@ async def add_text(
 
     text_dict["added_by"] = request.user_id
     text_db = TextDb(**text_dict)
-    await text_service.insert_text(text_db)
+
+    await text_service.insert_text(
+        text=text_db,
+        user_id=request.user_id,
+        role=UserRole(request.user_role)
+    )
 
 
 @router.get(
