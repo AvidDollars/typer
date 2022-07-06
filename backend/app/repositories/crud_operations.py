@@ -1,7 +1,7 @@
 from operator import methodcaller
 from typing import Literal
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from ..db import Database
 from ..utils import Pagination
@@ -57,11 +57,17 @@ class CrudOperations:
                 (await session.execute(statement)).scalars()
             )
 
-    async def update_resource(self, resource_id: int, **fields_to_update):
+    async def update_resource(self, resource, resource_id: int, **fields_to_update):
         return NotImplemented
 
-    async def delete_resource(self, resource_id: int):
-        return NotImplemented
+    async def delete_resource(self, resource, *, filter_) -> int:
+        session = await self.db.get_session()
+
+        async with session.begin():
+            statement = delete(resource).filter(filter_)
+            result = await session.execute(statement)
+            await session.commit()
+            return result.rowcount  # number of rows affected by deletion
 
     # other operations
     # TODO -> make its own dedicated class for non-crud operations?
