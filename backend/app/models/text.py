@@ -20,7 +20,7 @@ class TextDetail(TextBase):
     id: UUID4
 
 
-class TextDb(TextBase, table=True):
+class TextDb(TextIn, table=True):
 
     __tablename__ = "texts"
 
