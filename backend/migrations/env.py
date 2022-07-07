@@ -14,6 +14,7 @@ from app.main import app
 from app.models import user
 from app.models import text
 from app.models import typing_session
+from app.models import text_rating
 
 
 # this is the Alembic Config object, which provides
