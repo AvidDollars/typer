@@ -28,3 +28,7 @@ class TextDb(TextIn, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     added_by: UUID4 = Field(foreign_key="users.id", nullable=False)
     is_public: bool = False
+
+
+class TextOut(TextDb):
+    ...

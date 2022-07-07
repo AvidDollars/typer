@@ -7,7 +7,7 @@ from pydantic import UUID4
 
 from ..containers import Container
 from ..models.enums import UserRole
-from ..models.text import TextIn, TextDb, TextDetail
+from ..models.text import TextIn, TextDb, TextDetail, TextOut
 from ..services import TextService
 from ..services.auth_service import required_authentication, optional_authentication
 from ..utils import Pagination
@@ -62,6 +62,22 @@ async def get_texts(
 
     else:
         return await text_service.get_user_texts(user_id=request.user_id, pagination=pagination)
+
+
+@router.get(
+    "/{text_id}",
+    dependencies=[Depends(optional_authentication)],
+    response_model=TextOut
+)
+@inject
+async def get_text(
+        text_id: UUID4,
+        request: Request,
+        text_service: TextService = Depends(Provide[Container.text_service])
+):
+    user_id = getattr(request, "user_id", None)
+    text = await text_service.get_text(text_id=text_id, user_id=user_id)
+    return text
 
 
 @router.delete(
