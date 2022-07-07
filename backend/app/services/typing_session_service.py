@@ -3,6 +3,8 @@ from ..models.typing_session import TypingSessionDb
 from sqlalchemy.exc import IntegrityError
 from ..constants import INVALID_FOREIGN_KEY
 from fastapi import HTTPException, status
+from pydantic import UUID4
+from sqlalchemy import and_
 
 
 __all__ = ("TypingSessionService", )
@@ -27,3 +29,16 @@ class TypingSessionService:
                 )
             else:
                 raise  # unexpected error... will be logged
+
+    async def get_user_typing_sessions(self, *, user_id: UUID4, text_id: UUID4):
+        user_sessions_filter = TypingSessionDb.user_id == user_id
+        particular_text_sessions_filter = TypingSessionDb.text_id == text_id
+
+        if text_id is None:
+            filter_ = user_sessions_filter
+        else:
+            filter_ = and_(user_sessions_filter, particular_text_sessions_filter)
+
+        return await self.repository.read_resource(
+            TypingSessionDb, filter_=filter_, method="all"
+        )

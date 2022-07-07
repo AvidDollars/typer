@@ -81,7 +81,7 @@ async def get_text(
 
 
 @router.delete(
-    "/{id}",
+    "/{text_id}",
     dependencies=[Depends(required_authentication)]
 )
 @inject
