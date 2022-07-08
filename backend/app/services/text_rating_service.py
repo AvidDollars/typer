@@ -1,9 +1,9 @@
-from ..repositories import CrudOperations
-from ..models.text_rating import TextRatingDb
-from sqlalchemy.exc import IntegrityError
-from ..constants import UNIQUE_CONSTRAINT_VIOLATED
 from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
+from ..constants import UNIQUE_CONSTRAINT_VIOLATED
+from ..models.text_rating import TextRatingDb
+from ..repositories import CrudOperations
 
 __all__ = ("TextRatingService", )
 
@@ -26,3 +26,13 @@ class TextRatingService:
             else:
                 raise  # unexpected error... will be logged
 
+    async def update_text_rating(self, *, text_rating: TextRatingDb):
+        rows_affected = await self.repository.update_resource(
+            TextRatingDb,
+            resource_id=text_rating.id,
+            _filter=TextRatingDb.rated_by == text_rating.rated_by,
+            rating=text_rating.rating
+        )
+
+        if not rows_affected:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="text rating not found")
