@@ -5,8 +5,13 @@ from sqlmodel import SQLModel, Field, UniqueConstraint
 
 
 class TextRatingIn(SQLModel):
-    rating: int = Field(ge=1, le=10)
+    rating: int = Field(ge=1, le=10, nullable=True)
     rated_text: UUID4 = Field(foreign_key="texts.id", nullable=False)
+
+
+class TextRatingUpdate(SQLModel):
+    rating: int | None = Field(ge=1, le=10, nullable=True)
+    id: UUID4
 
 
 class TextRatingDb(TextRatingIn, table=True):
