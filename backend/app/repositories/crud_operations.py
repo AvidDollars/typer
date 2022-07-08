@@ -1,7 +1,8 @@
 from operator import methodcaller
 from typing import Literal
 
-from sqlalchemy import select, delete
+from pydantic import UUID4
+from sqlalchemy import select, delete, update, and_
 
 from ..db import Database
 from ..utils import Pagination
@@ -57,8 +58,24 @@ class CrudOperations:
                 (await session.execute(statement)).scalars()
             )
 
-    async def update_resource(self, resource, resource_id: int, **fields_to_update):
-        return NotImplemented
+    async def update_resource(self, resource, *, resource_id: UUID4, _filter=None,  **fields_to_update):
+        resource_id_filter = resource.id == resource_id
+
+        if _filter is None:
+            _filter = resource_id_filter
+        else:
+            _filter = and_(resource_id_filter, _filter)
+
+        session = await self.db.get_session()
+
+        async with session.begin():
+            statement = update(resource). \
+                filter(_filter). \
+                values(**fields_to_update)
+
+            result = await session.execute(statement)
+            await session.commit()
+            return result.rowcount
 
     async def delete_resource(self, resource, *, filter_) -> int:
         session = await self.db.get_session()
