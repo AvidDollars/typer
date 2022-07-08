@@ -7,14 +7,15 @@ from passlib.hash import argon2
 from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
 from .db import Database
 from .logger import get_logger
-from .repositories import UserRepository, TextRepository, TypingSessionRepository
+from .repositories import UserRepository, TextRepository, TypingSessionRepository, TextRatingRepository
 from .services import \
     UserRegistrationEmailService, \
     UserService, \
     HashingService, \
     JwtToken, \
     TextService, \
-    TypingSessionService
+    TypingSessionService, \
+    TextRatingService
 
 
 class Container(DeclarativeContainer):
@@ -58,10 +59,15 @@ class Container(DeclarativeContainer):
         db=db
     )
 
+    text_rating_repository = Factory(
+        TextRatingRepository,
+        db=db
+    )
+
     # SERVICES
     user_registration_email_service = Factory(
         UserRegistrationEmailService,
-        email_config=config.smtp,
+        email_config=config.smtp
     )
 
     hashing_service = Singleton(
@@ -93,4 +99,9 @@ class Container(DeclarativeContainer):
         TypingSessionService,
         repository=typing_session_repository,
         logger=logger
+    )
+
+    text_rating_service = Factory(
+        TextRatingService,
+        repository=text_rating_repository
     )
