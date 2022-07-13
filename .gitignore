@@ -5,10 +5,11 @@ __pycache__/
 
 # config files, log files
 .env.*
-*/logs/*
+logs/
 
 # Pycharm
 .idea/
 
 # tests
-tests/
+.pytest_cache/
+testing.db
