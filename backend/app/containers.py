@@ -22,7 +22,7 @@ class Container(DeclarativeContainer):
     """ dependency injection container """
 
     # WIRING CONFIG
-    wiring_config = WiringConfiguration(packages=[".routers", ".middleware"])
+    wiring_config = WiringConfiguration(packages=[".routers", ".middleware", ".tests"])
 
     # CONFIG
     config = Configuration(yaml_files=[path.join(APP_DIR, CONFIG_FILE_NAME)])
@@ -38,8 +38,7 @@ class Container(DeclarativeContainer):
     # DATABASE
     db = Singleton(
         Database,
-        db_url=config.db_url,
-        environment=config.environment
+        config=config
     )
 
     # REPOSITORIES
