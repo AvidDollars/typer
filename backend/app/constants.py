@@ -4,6 +4,7 @@ from os import path
 APP_DIR = path.dirname(path.abspath(__file__))
 LOG_DIR = path.abspath("logs")
 EMAIL_TEMPLATE_DIR = path.abspath("email_templates")
+TEST_DB_SEED_DIR = path.join(APP_DIR, "tests/test_db_seed")
 
 # CONFIG
 CONFIG_FILE_NAME = ".env.yml"
