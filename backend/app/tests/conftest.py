@@ -16,7 +16,7 @@ from ..models.user import UserDb
 from ..repositories import CrudOperations
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 async def db_data():
     yield await populate_test_db()
     os.remove("testing.db")
