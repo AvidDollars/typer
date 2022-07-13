@@ -7,7 +7,7 @@ from ..models.user import UserLogin
 from ..services import UserService
 
 router = APIRouter(
-    prefix="/login", tags=["Auth"]
+    prefix="/login", tags=["User"]
 )
 
 

@@ -5,7 +5,7 @@ from ..containers import Container
 from ..services import UserService
 
 router = APIRouter(
-    prefix="/activate", tags=["Auth"]
+    prefix="/activate", tags=["User"]
 )
 
 

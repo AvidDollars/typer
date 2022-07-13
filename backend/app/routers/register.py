@@ -6,7 +6,7 @@ from ..models.user import UserIn
 from ..services import UserRegistrationEmailService, UserService
 
 router = APIRouter(
-    prefix="/register", tags=["Auth"]
+    prefix="/register", tags=["User"]
 )
 
 
