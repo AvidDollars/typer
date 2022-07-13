@@ -1,0 +1,12 @@
+[
+    {"content": "this is short text", "name": "short text", "is_public": true},
+    {"content": "my very cool text... yeah", "name": "cool", "description": "very enjoyable"},
+    {"content": "lorem ipsum dolor lyngadium leviosa", "name": "nosense", "description": "I like it"},
+    {"content": "Hello, world! This is my content... enjoy!", "name": "enjoyable text"},
+    {"content": "Very Lovely Writing.", "name": "lovely", "description": "lovely", "is_public": true},
+    {"content": "Quite difficult text to type without mistakes", "name": "difficult piece", "is_public": true},
+    {"content": "very short work", "name": "short work"},
+    {"content": "Also quite short work.", "name": "not so long", "description": "short"},
+    {"content": "hesoyam aezakmi", "name": "GTA", "description": "my cheatsheet", "is_public": true},
+    {"content": "goodbye", "name": "goodbye"}
+]
