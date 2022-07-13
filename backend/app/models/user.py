@@ -51,7 +51,7 @@ class UserDb(UserIn, table=True):
     __tablename__ = "users"
 
     id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4)
-    role: UserRole = Field(default=UserRole.user, nullable=False)
+    role: UserRole | None = Field(default=UserRole.user, nullable=False)
     created_at: datetime = Field(default_factory=datetime.now)
     email_subscription: bool = True
     is_activated: bool = False
