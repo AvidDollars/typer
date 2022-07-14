@@ -24,7 +24,9 @@ class UserRepository(CrudOperations):
             return user.activation_link
 
         except IntegrityError as error:
-            if error.orig.sqlstate == UNIQUE_CONSTRAINT_VIOLATED:
+
+            # Sqlite3 doesn't know "sqlstate" attribute
+            if "UNIQUE" in error._message() or error.orig.sqlstate == UNIQUE_CONSTRAINT_VIOLATED:
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                     detail="user is already registered"
