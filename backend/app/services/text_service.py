@@ -1,13 +1,12 @@
+from pydantic import UUID4
+from sqlalchemy import and_, or_
+
+from ..constants import USER_TEXTS_MAX_COUNT
+from ..custom_exceptions import UserTextCountLimitException, TextNotFoundException
+from ..models.enums import UserRole
 from ..models.text import TextDb
 from ..repositories.crud_operations import CrudOperations
 from ..utils import Pagination
-from fastapi import HTTPException
-from ..constants import USER_TEXTS_MAX_COUNT
-from ..models.enums import UserRole
-from sqlalchemy import and_, or_
-from pydantic import UUID4
-from fastapi import status
-
 
 __all__ = ("TextService", )
 
@@ -20,7 +19,7 @@ class TextService:
         user_texts_count = await self.repository.get_count(TextDb, filter_=TextDb.added_by == user_id)
 
         if user_texts_count >= USER_TEXTS_MAX_COUNT and role < UserRole.master_admin:
-            raise HTTPException(status_code=403, detail=f"user can store {USER_TEXTS_MAX_COUNT} texts at most")
+            raise UserTextCountLimitException(USER_TEXTS_MAX_COUNT)
         else:
             await self.repository.create_resource(text)
 
@@ -58,7 +57,7 @@ class TextService:
         )
 
         if not text:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            raise TextNotFoundException
         else:
             return text
 
@@ -71,4 +70,4 @@ class TextService:
         rows_deleted = await self.repository.delete_resource(TextDb, filter_=filter_)
 
         if not rows_deleted:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+            raise TextNotFoundException

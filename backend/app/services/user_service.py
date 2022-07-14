@@ -1,7 +1,7 @@
-from .hashing_service import AbstractHashingService
 from .auth_service import JwtToken
+from .hashing_service import AbstractHashingService
+from ..custom_exceptions import InvalidCredentialsException, AccountNotActivatedException
 from ..models.user import UserDb, UserIn, UserLogin
-from fastapi import HTTPException, status
 from ..utils import auto_repr
 
 __all__ = ("UserService", )
@@ -32,16 +32,10 @@ class UserService:
         return result
 
     async def login_user(self, user: UserLogin):
-        # TODO: created custom errors (will inherit from HttpException)
-        invalid_credentials_err = HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="invalid credentials"
-        )
-
         if (user_db := await self._get_user_from_db(user)) is None:
-            raise invalid_credentials_err
+            raise InvalidCredentialsException
 
-        if self._login_approved(user, user_db, message_if_password_mismatch=invalid_credentials_err):
+        if self._login_approved(user, user_db, exception_if_password_mismatch=InvalidCredentialsException):
 
             return self.jwt_token.encode({
                 "role": user_db.role,
@@ -58,17 +52,15 @@ class UserService:
         user_db = await self.repository.read_resource(UserDb, filter_=field, method="one_or_none")
         return user_db
 
-    def _login_approved(self, user_in, user_db, *, message_if_password_mismatch: HTTPException) -> bool:
+    def _login_approved(self, user_in, user_db, *, exception_if_password_mismatch) -> bool:
+
         # TODO: what if account is not activated and activation token is expired?
         if not user_db.is_activated:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="account is not activated"
-            )
+            raise AccountNotActivatedException
 
         password_match = self.hashing_service.verify(user_in.password, user_db.password)
 
         if not password_match:
-            raise message_if_password_mismatch
+            raise exception_if_password_mismatch
         else:
             return True

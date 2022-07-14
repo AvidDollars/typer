@@ -1,11 +1,11 @@
-from ..repositories import CrudOperations
-from ..models.typing_session import TypingSessionDb
-from sqlalchemy.exc import IntegrityError
-from ..constants import INVALID_FOREIGN_KEY
-from fastapi import HTTPException, status
 from pydantic import UUID4
 from sqlalchemy import and_
+from sqlalchemy.exc import IntegrityError
 
+from ..constants import INVALID_FOREIGN_KEY
+from ..custom_exceptions import CantSaveTypingSessionException
+from ..models.typing_session import TypingSessionDb
+from ..repositories import CrudOperations
 
 __all__ = ("TypingSessionService", )
 
@@ -23,10 +23,7 @@ class TypingSessionService:
             self.logger.warning(f"exception: {error}\n", exc_info=True)
 
             if error.orig.sqlstate == INVALID_FOREIGN_KEY:
-                raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail="unable to save - text or user does not exist"
-                )
+                raise CantSaveTypingSessionException
             else:
                 raise  # unexpected error... will be logged
 

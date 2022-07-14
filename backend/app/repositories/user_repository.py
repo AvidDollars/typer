@@ -1,9 +1,13 @@
-from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from .crud_operations import CrudOperations
 from ..constants import UNIQUE_CONSTRAINT_VIOLATED
+from ..custom_exceptions import \
+    UserAlreadyRegisteredException, \
+    ActivationTokenNotFoundException, \
+    AccountAlreadyActivatedException, \
+    ActivationLinkExpiredException
 from ..db import Database
 from ..models.user import UserDb
 from ..utils import timedelta_is_less_than, auto_repr
@@ -27,10 +31,7 @@ class UserRepository(CrudOperations):
 
             # Sqlite3 doesn't know "sqlstate" attribute
             if "UNIQUE" in error._message() or error.orig.sqlstate == UNIQUE_CONSTRAINT_VIOLATED:
-                raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail="user is already registered"
-                )
+                raise UserAlreadyRegisteredException
 
             else:
                 raise  # unexpected error... will be logged
@@ -45,17 +46,11 @@ class UserRepository(CrudOperations):
 
             # activation token is not present in a database
             if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="activation token does not exist"
-                )
+                raise ActivationTokenNotFoundException
 
             # activation token is present in a database, but account is already activated
             if user.is_activated:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="account is already activated"
-                )
+                raise AccountAlreadyActivatedException
 
             # user clicked on valid link and is not yet activated -> activation process
             if not user.is_activated:
@@ -73,7 +68,4 @@ class UserRepository(CrudOperations):
 
                 # user is not activated, but activation link is expired
                 else:
-                    raise HTTPException(
-                        status_code=status.HTTP_403_FORBIDDEN,
-                        detail="activation link is expired"
-                    )
+                    raise ActivationLinkExpiredException

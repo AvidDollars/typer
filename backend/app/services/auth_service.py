@@ -1,13 +1,16 @@
 from datetime import datetime, timedelta
 
 import jwt
-from fastapi import HTTPException
 from fastapi.requests import Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+from ..custom_exceptions import \
+    ExpiredTokenException, \
+    InvalidTokenException, \
+    NotAuthenticatedException, \
+    NotAuthorizedException
 from ..models.enums import UserRole
 from ..utils import auto_repr
-
 
 __all__ = (
     "JwtToken",
@@ -41,12 +44,12 @@ class JwtToken:
             decoded_token = jwt.decode(token, self.secret, algorithms=[self.jwt_algorithm])
 
             if decoded_token["exp"] > datetime.now():
-                raise HTTPException(401, "expired token")
+                raise ExpiredTokenException
             else:
                 return decoded_token
 
         except jwt.InvalidTokenError:
-            raise HTTPException(401, "invalid token")
+            raise InvalidTokenException
 
 
 class CustomHttpBearer(HTTPBearer):
@@ -74,10 +77,10 @@ class CustomHttpBearer(HTTPBearer):
             return result
 
         except jwt.ExpiredSignatureError:
-            raise HTTPException(401, "expired token")
+            raise ExpiredTokenException
 
         except jwt.InvalidTokenError:
-            raise HTTPException(401, "invalid token")
+            raise InvalidTokenException
 
 
 required_authentication = CustomHttpBearer(auto_error=True)
@@ -90,10 +93,10 @@ def ensure_role(*, required_role: UserRole, request: Request):
     user_role_id = getattr(request, "user_role", None)
 
     if user_role_id is None:
-        raise HTTPException(401, "not authenticated")
+        raise NotAuthenticatedException
 
     if required_role > UserRole(user_role_id):
-        raise HTTPException(403, "not authorized")
+        raise NotAuthorizedException
 
 
 def is_moderator(request: Request):

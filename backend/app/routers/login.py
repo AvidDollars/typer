@@ -1,8 +1,9 @@
 from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from ..containers import Container
+from ..custom_exceptions import MissingCredentialsException
 from ..models.user import UserLogin
 from ..services import UserService
 
@@ -21,10 +22,7 @@ async def login_user(
     missing_password = user.password is None
 
     if missing_name_and_mail or missing_password:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="password along with email or name must be provided"
-        )
+        raise MissingCredentialsException
 
     token = await user_service.login_user(user)
     return {"token": token}

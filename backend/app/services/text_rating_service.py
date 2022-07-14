@@ -1,7 +1,7 @@
-from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError
 
 from ..constants import UNIQUE_CONSTRAINT_VIOLATED
+from ..custom_exceptions import AlreadyRatedTextException, TextRatingNotFoundException
 from ..models.text_rating import TextRatingDb
 from ..repositories import CrudOperations
 
@@ -18,10 +18,7 @@ class TextRatingService:
 
         except IntegrityError as error:
             if error.orig.sqlstate == UNIQUE_CONSTRAINT_VIOLATED:
-                raise HTTPException(
-                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail="already rated by the user"
-                )
+                raise AlreadyRatedTextException
 
             else:
                 raise  # unexpected error... will be logged
@@ -35,4 +32,4 @@ class TextRatingService:
         )
 
         if not rows_affected:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="text rating not found")
+            raise TextRatingNotFoundException
