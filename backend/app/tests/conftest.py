@@ -1,9 +1,9 @@
 import asyncio
 import json
+import os
 from os import path
 
-import pytest
-import os
+import pytest_asyncio
 from httpx import AsyncClient
 
 from .. import main
@@ -16,19 +16,19 @@ from ..models.user import UserDb
 from ..repositories import CrudOperations
 
 
-@pytest.fixture(scope="module")
+@pytest_asyncio.fixture(scope="module")
 async def db_data():
     yield await populate_test_db()
     os.remove("testing.db")
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def async_client():
     async with AsyncClient(app=main.app, base_url="http://localhost:8000") as client:
         yield client
 
 
-@pytest.fixture(scope="session")
+@pytest_asyncio.fixture(scope="session")
 def event_loop():
     loop = asyncio.get_event_loop()
     yield loop
