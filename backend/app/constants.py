@@ -1,9 +1,11 @@
+import os.path
 from os import path
 
 # DIRECTORIES
+BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 APP_DIR = path.dirname(path.abspath(__file__))
 LOG_DIR = path.abspath("logs")
-EMAIL_TEMPLATE_DIR = path.abspath("email_templates")
+EMAIL_TEMPLATE_DIR = path.join(BACKEND_DIR, "email_templates")
 TEST_DB_SEED_DIR = path.join(APP_DIR, "tests/test_db_seed")
 
 # CONFIG
