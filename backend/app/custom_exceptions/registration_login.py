@@ -53,7 +53,7 @@ class MissingCredentialsException(HTTPException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="password along with email or name must be provided"
+            detail="password along with email and/or name must be provided"
         )
 
 
