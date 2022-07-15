@@ -6,15 +6,15 @@ from os import path
 import pytest_asyncio
 from httpx import AsyncClient
 
-from .. import main
-from ..constants import TEST_DB_SEED_DIR
-from ..containers import Container
-from ..models.text import TextDb
-from ..models.text_rating import TextRatingDb
-from ..models.typing_session import TypingSessionDb
-from ..models.user import UserDb
-from ..repositories import CrudOperations
-from ..services.email_service import UserRegistrationEmailService
+from typer import main
+from typer.constants import TEST_DB_SEED_DIR
+from typer.containers import Container
+from typer.models.text import TextDb
+from typer.models.text_rating import TextRatingDb
+from typer.models.typing_session import TypingSessionDb
+from typer.models.user import UserDb
+from typer.repositories import CrudOperations
+from typer.services.email_service import UserRegistrationEmailService
 
 
 @pytest_asyncio.fixture(scope="module")

@@ -22,7 +22,7 @@ class Container(DeclarativeContainer):
     """ dependency injection container """
 
     # WIRING CONFIG
-    wiring_config = WiringConfiguration(packages=[".routers", ".middleware", ".tests"])
+    wiring_config = WiringConfiguration(packages=[".routers", ".middleware"])
 
     # CONFIG
     config = Configuration(yaml_files=[path.join(APP_DIR, CONFIG_FILE_NAME)])
