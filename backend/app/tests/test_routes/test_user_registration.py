@@ -28,7 +28,7 @@ async def test_invalid_arguments_for_user_registration(async_client):
 
 
 @pytest.mark.asyncio
-async def test_user_already_exists(db_data, async_client, fake_email_sender):
+async def test_user_already_exists(db_data, async_client):
 
     # PROVIDED NAME ALREADY EXISTS
     name_already_exists = dict(name="Lojza", email="thisis.valid@email.com", password="abc123DEF")
@@ -51,8 +51,8 @@ async def test_user_already_exists(db_data, async_client, fake_email_sender):
 async def test_registration_email_has_been_sent(db_data, async_client, fake_email_sender):
 
     # ALL FIELDS ARE VALID AND NEITHER NAME NOR EMAIL IS PRESENT IN THE DATABASE
-    name_already_exists = dict(name="Marty", email="thisis.valid@email.eu", password="abc123DEF")
-    response = await async_client.post("/register/", json=name_already_exists)
+    valid_registration_data = dict(name="Marty", email="thisis.valid@email.eu", password="abc123DEF")
+    response = await async_client.post("/register/", json=valid_registration_data)
 
     assert response.status_code == 200
     assert response.json() == {"message": "email sent"}

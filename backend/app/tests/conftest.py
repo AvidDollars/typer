@@ -117,3 +117,5 @@ async def populate_test_db():
         text_rating.update(rated_by=user_id, rated_text=text_id)
         text_rating = TextRatingDb(**text_rating)
         await crud_operations.create_resource(text_rating)
+
+    return crud_operations
