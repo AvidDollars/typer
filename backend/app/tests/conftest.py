@@ -14,6 +14,7 @@ from ..models.text_rating import TextRatingDb
 from ..models.typing_session import TypingSessionDb
 from ..models.user import UserDb
 from ..repositories import CrudOperations
+from ..services.email_service import UserRegistrationEmailService
 
 
 @pytest_asyncio.fixture(scope="module")
@@ -33,6 +34,18 @@ def event_loop():
     loop = asyncio.get_event_loop()
     yield loop
     loop.close()
+
+
+@pytest_asyncio.fixture
+async def fake_email_sender(monkeypatch):
+    email_sender = dict(recipient=None, activation_token=None)
+
+    async def fake_registration_email(_, *, recipient, activation_token):
+        email_sender["recipient"] = recipient
+        email_sender["activation_token"] = activation_token
+
+    monkeypatch.setattr(UserRegistrationEmailService, "registration_email", fake_registration_email)
+    return email_sender
 
 
 async def populate_test_db():
