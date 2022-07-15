@@ -16,7 +16,7 @@ router = APIRouter(
 )
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 @inject
 async def add_typing_session(
         request: Request,
@@ -30,7 +30,7 @@ async def add_typing_session(
     await typing_session_service.insert_typing_session(typing_session_db)
 
 
-@router.get("", response_model=list[TypingSessionOut])
+@router.get("/", response_model=list[TypingSessionOut])
 @inject
 async def get_user_typing_sessions(
         request: Request,

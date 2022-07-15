@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 @inject
 async def add_text_rating(
         request: Request,
@@ -25,7 +25,7 @@ async def add_text_rating(
     await text_rating_service.insert_text_rating(text_rating=text_rating)
 
 
-@router.patch("")
+@router.patch("/")
 @inject
 async def update_text_rating(
     request: Request,

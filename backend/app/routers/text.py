@@ -45,7 +45,7 @@ async def add_text(
 
 
 @router.get(
-    "",
+    "/",
     dependencies=[Depends(optional_authentication)],
     response_model=list[TextDetail]
 )
