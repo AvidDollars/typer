@@ -1,6 +1,6 @@
 import pytest
 
-from ..custom_exceptions import UserAlreadyRegisteredException
+from app.custom_exceptions import UserAlreadyRegisteredException
 
 
 @pytest.mark.asyncio
