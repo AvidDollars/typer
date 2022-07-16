@@ -1,10 +1,11 @@
 from datetime import datetime
-from uuid import uuid4
 
 from pydantic import UUID4
 from sqlalchemy import Column
 from sqlalchemy import JSON
 from sqlmodel import SQLModel, Field
+
+from ..utils import uuid4_bugfix
 
 
 class TypingSessionBase(SQLModel):
@@ -21,7 +22,7 @@ class TypingSessionDb(TypingSessionIn, table=True):
 
     __tablename__ = "typing_sessions"
 
-    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4)
+    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4_bugfix)
     user_id: UUID4 = Field(foreign_key="users.id", nullable=False)
     created_at: datetime = Field(nullable=False, default_factory=datetime.now)
 

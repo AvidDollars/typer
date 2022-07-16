@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 from functools import partial
 from secrets import token_hex
 from typing import Callable
+from uuid import uuid4
 
 from fastapi import APIRouter
 
@@ -11,6 +12,7 @@ __all__ = (
     "action_on_success",
     "timedelta_is_less_than",
     "register_routes",
+    "uuid4_bugfix"
 )
 
 
@@ -65,3 +67,14 @@ def register_routes(router: APIRouter, *routes) -> None:
     """
     for route in routes:
         router.include_router(route)
+
+
+def uuid4_bugfix():
+    """
+    temporal bug-fix for "ValueError: badly formed hexadecimal UUID string" issue
+    see: https://github.com/tiangolo/sqlmodel/issues/25
+    """
+    val = uuid4()
+    while val.hex[0] == '0':
+        val = uuid4()
+    return val

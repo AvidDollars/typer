@@ -1,7 +1,7 @@
-from uuid import uuid4
-
 from pydantic import UUID4
 from sqlmodel import SQLModel, Field, UniqueConstraint
+
+from ..utils import uuid4_bugfix
 
 
 class TextRatingIn(SQLModel):
@@ -18,7 +18,7 @@ class TextRatingDb(TextRatingIn, table=True):
 
     __tablename__ = "text_ratings"
 
-    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4)
+    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4_bugfix)
     rated_by: UUID4 = Field(foreign_key="users.id", nullable=False)
 
     __table_args__ = UniqueConstraint("rated_by", "rated_text", name="uix_1"),

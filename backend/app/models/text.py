@@ -1,9 +1,10 @@
 from datetime import datetime
-from uuid import uuid4
 
 from pydantic import UUID4
 from sqlalchemy import Column, TEXT
 from sqlmodel import SQLModel, Field
+
+from ..utils import uuid4_bugfix
 
 
 class TextBase(SQLModel):
@@ -24,7 +25,7 @@ class TextDb(TextIn, table=True):
 
     __tablename__ = "texts"
 
-    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4)
+    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4_bugfix)
     created_at: datetime = Field(default_factory=datetime.now)
     added_by: UUID4 = Field(foreign_key="users.id", nullable=False)
     is_public: bool = False

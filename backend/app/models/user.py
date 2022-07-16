@@ -1,13 +1,15 @@
 import re
 from datetime import datetime
-from uuid import uuid4
 
 from pydantic import validator, BaseModel, UUID4
 from sqlmodel import SQLModel, Field
 
 from .enums import UserRole
-from ..utils.helpers import generate_registration_token
-from ..utils.validators import at_least_one_uppercase_and_one_digit_password, email_validator
+from ..utils import \
+    at_least_one_uppercase_and_one_digit_password, \
+    email_validator, \
+    generate_registration_token, \
+    uuid4_bugfix
 
 
 class UserBase(SQLModel):
@@ -50,7 +52,7 @@ class UserDb(UserIn, table=True):
 
     __tablename__ = "users"
 
-    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4)
+    id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4_bugfix)
     role: UserRole | None = Field(default=UserRole.user, nullable=False)
     created_at: datetime = Field(default_factory=datetime.now)
     email_subscription: bool = True
