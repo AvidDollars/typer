@@ -4,7 +4,7 @@
     {"name": "D3R3K", "email": "derek.uncle@mail.eu" , "password": "abc123ABC", "is_activated": "true"},
     {"name": "kAtY", "email": "katy.paty@hello.com" , "password": "abc123ABC", "role":  "2"},
     {"name": "Bill", "email": "kill.bill@domain.org" , "password": "abc123ABC", "is_activated": "true"},
-    {"name": "veronica", "email": "terry.very@something.eu" , "password": "abc123ABC", "role":  "4"},
+    {"name": "veronica", "email": "terry.very@something.eu" , "password": "abc123ABC", "role":  "4", "is_activated": "true"},
     {"name": "tEdd", "email": "uncle.tedd@usa.com" , "password": "abc123ABC", "is_activated": "true"},
     {"name": "VikThor", "email": "vik.tor@seznam.cz" , "password": "abc123ABC"},
     {"name": "Pamela", "email": "pamela.anderson@domain.net" , "password": "abc123ABC", "role":  "3"},

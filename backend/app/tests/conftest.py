@@ -80,6 +80,7 @@ async def populate_test_db():
     text_idx = 0
 
     # first 4 users will have text added
+    # 1st user has 1 text, 2nd user has 2 texts, 3rd user has 3 texts, 4th user has 4 texts
     for counter, user_id in enumerate(user_ids[:4], 1):
         for _ in range(counter):
             text = texts[text_idx]
