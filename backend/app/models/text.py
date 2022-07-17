@@ -33,3 +33,6 @@ class TextDb(TextIn, table=True):
 
 class TextOut(TextDb):
     ...
+
+
+__all__ = [item for item in dir() if str(item).startswith("Text")]

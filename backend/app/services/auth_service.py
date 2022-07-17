@@ -9,7 +9,7 @@ from ..custom_exceptions import \
     InvalidTokenException, \
     NotAuthenticatedException, \
     NotAuthorizedException
-from ..models.enums import UserRole
+from ..models import UserRole
 from ..utils import auto_repr
 
 __all__ = (

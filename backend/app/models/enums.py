@@ -3,6 +3,9 @@ from enum import Enum, auto, unique
 from typing import Literal
 
 
+__all__ = ["UserRole"]
+
+
 # key = value
 class AutoName(Enum):
     @staticmethod

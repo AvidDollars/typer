@@ -26,3 +26,6 @@ class TextRatingDb(TextRatingIn, table=True):
 
 class TextRatingOut(TextRatingDb):
     ...
+
+
+__all__ = [item for item in dir() if str(item).startswith("TextRating")]

@@ -5,7 +5,7 @@ from fastapi.requests import Request
 from pydantic import UUID4
 
 from ..containers import Container
-from ..models.typing_session import TypingSessionIn, TypingSessionDb, TypingSessionOut
+from ..models import TypingSessionIn, TypingSessionDb, TypingSessionOut
 from ..services.auth_service import required_authentication
 from ..services.typing_session_service import TypingSessionService
 

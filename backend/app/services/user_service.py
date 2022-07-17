@@ -1,7 +1,7 @@
 from .auth_service import JwtToken
 from .hashing_service import AbstractHashingService
 from ..custom_exceptions import InvalidCredentialsException, AccountNotActivatedException
-from ..models.user import UserDb, UserIn, UserLogin
+from ..models import UserDb, UserIn, UserLogin
 from ..utils import auto_repr
 
 __all__ = ("UserService", )

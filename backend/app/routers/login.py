@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from ..containers import Container
 from ..custom_exceptions import MissingCredentialsException
-from ..models.user import UserLogin
+from ..models import UserLogin
 from ..services import UserService
 
 router = APIRouter(

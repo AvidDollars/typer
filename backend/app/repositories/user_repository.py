@@ -9,7 +9,7 @@ from ..custom_exceptions import \
     AccountAlreadyActivatedException, \
     ActivationLinkExpiredException
 from ..db import Database
-from ..models.user import UserDb
+from ..models import UserDb
 from ..utils import timedelta_is_less_than, auto_repr
 
 __all__ = ("UserRepository", )

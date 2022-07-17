@@ -29,3 +29,6 @@ class TypingSessionDb(TypingSessionIn, table=True):
 
 class TypingSessionOut(TypingSessionDb):
     ...
+
+
+__all__ = [item for item in dir() if str(item).startswith("TypingSession")]

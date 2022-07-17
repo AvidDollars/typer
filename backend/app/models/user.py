@@ -65,3 +65,6 @@ class UserOut(UserBase):
     created_at: datetime
     email_subscription: bool
     is_activated: bool
+
+
+__all__ = [item for item in dir() if str(item).startswith("User")]

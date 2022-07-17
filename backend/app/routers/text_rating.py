@@ -5,7 +5,7 @@ from fastapi.requests import Request
 from fastapi.responses import Response
 
 from ..containers import Container
-from ..models.text_rating import TextRatingIn, TextRatingDb, TextRatingUpdate
+from ..models import TextRatingIn, TextRatingDb, TextRatingUpdate
 from ..services import TextRatingService
 from ..services.auth_service import required_authentication
 

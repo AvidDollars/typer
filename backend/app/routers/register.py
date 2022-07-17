@@ -2,7 +2,7 @@ from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
 from ..containers import Container
-from ..models.user import UserIn
+from ..models import UserIn
 from ..services import UserRegistrationEmailService, UserService
 
 router = APIRouter(
