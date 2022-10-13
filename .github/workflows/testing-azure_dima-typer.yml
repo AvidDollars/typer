@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'dima-typer'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_CCA5DB3A6CDF41A599FC5AC42BA2D7AE }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E597C78DFB3E477F8B899810D602AFDE }}
