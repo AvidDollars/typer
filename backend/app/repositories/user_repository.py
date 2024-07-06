@@ -2,15 +2,15 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from .crud_operations import CrudOperations
-from ..constants import UNIQUE_CONSTRAINT_VIOLATED
-from ..custom_exceptions import \
+from constants import UNIQUE_CONSTRAINT_VIOLATED
+from custom_exceptions import \
     UserAlreadyRegisteredException, \
     ActivationTokenNotFoundException, \
     AccountAlreadyActivatedException, \
     ActivationLinkExpiredException
-from ..db import Database
-from ..models import UserDb
-from ..utils import timedelta_is_less_than, auto_repr
+from db import Database
+from models import UserDb
+from utils import timedelta_is_less_than, auto_repr
 
 __all__ = ("UserRepository", )
 

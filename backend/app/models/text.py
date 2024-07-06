@@ -4,7 +4,7 @@ from pydantic import UUID4
 from sqlalchemy import Column, TEXT
 from sqlmodel import SQLModel, Field
 
-from ..utils import uuid4_bugfix
+from utils import uuid4_bugfix
 
 
 class TextBase(SQLModel):

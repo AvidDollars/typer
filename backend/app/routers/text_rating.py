@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, status
 from fastapi.requests import Request
 from fastapi.responses import Response
 
-from ..containers import Container
-from ..models import TextRatingIn, TextRatingDb, TextRatingUpdate
-from ..services import TextRatingService
-from ..services.auth_service import required_authentication
+from containers import Container
+from models import TextRatingIn, TextRatingDb, TextRatingUpdate
+from services import TextRatingService
+from services.auth_service import required_authentication
 
 router = APIRouter(
     prefix="/text-ratings", tags=["Text Ratings"], dependencies=[Depends(required_authentication)]

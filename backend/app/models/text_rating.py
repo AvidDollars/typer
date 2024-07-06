@@ -1,7 +1,7 @@
 from pydantic import UUID4
 from sqlmodel import SQLModel, Field, UniqueConstraint
 
-from ..utils import uuid4_bugfix
+from utils import uuid4_bugfix
 
 
 class TextRatingIn(SQLModel):

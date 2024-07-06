@@ -3,7 +3,7 @@ from fastapi import Request, status, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from ..containers import Container
+from containers import Container
 
 
 @inject

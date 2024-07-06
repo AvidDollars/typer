@@ -2,10 +2,10 @@ from pydantic import UUID4
 from sqlalchemy import and_
 from sqlalchemy.exc import IntegrityError
 
-from ..constants import INVALID_FOREIGN_KEY
-from ..custom_exceptions import CantSaveTypingSessionException
-from ..models import TypingSessionDb
-from ..repositories import CrudOperations
+from constants import INVALID_FOREIGN_KEY
+from custom_exceptions import CantSaveTypingSessionException
+from models import TypingSessionDb
+from repositories import CrudOperations
 
 __all__ = ("TypingSessionService", )
 

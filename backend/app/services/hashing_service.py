@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from ..utils import auto_repr
+from utils import auto_repr
 
 
 __all__ = ("AbstractHashingService", "HashingService")

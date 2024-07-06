@@ -4,13 +4,13 @@ import jwt
 from fastapi.requests import Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from ..custom_exceptions import \
+from custom_exceptions import \
     ExpiredTokenException, \
     InvalidTokenException, \
     NotAuthenticatedException, \
     NotAuthorizedException
-from ..models import UserRole
-from ..utils import auto_repr
+from models import UserRole
+from utils import auto_repr
 
 __all__ = (
     "JwtToken",
@@ -65,7 +65,7 @@ class CustomHttpBearer(HTTPBearer):
             return result
 
         # TODO -> to be rewritten...
-        from ..containers import Container  # avoiding circular import
+        from containers import Container  # avoiding circular import
         secret = Container().config()["secret"]  # other solutions does not work :/
 
         try:

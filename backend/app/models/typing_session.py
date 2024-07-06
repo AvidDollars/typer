@@ -5,7 +5,7 @@ from sqlalchemy import Column
 from sqlalchemy import JSON
 from sqlmodel import SQLModel, Field
 
-from ..utils import uuid4_bugfix
+from utils import uuid4_bugfix
 
 
 class TypingSessionBase(SQLModel):

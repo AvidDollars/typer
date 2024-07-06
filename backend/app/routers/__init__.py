@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from . import activate, login, register, text, typing_session, text_rating, root
-from ..utils import register_routes
+from utils import register_routes
 
 router = APIRouter()
 

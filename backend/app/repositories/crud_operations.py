@@ -4,8 +4,8 @@ from typing import Literal
 from pydantic import UUID4
 from sqlalchemy import select, delete, update, and_
 
-from ..db import Database
-from ..utils import Pagination
+from db import Database
+from utils import Pagination
 
 __all__ = ("CrudOperations", )
 

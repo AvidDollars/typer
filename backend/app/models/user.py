@@ -5,7 +5,7 @@ from pydantic import validator, BaseModel, UUID4
 from sqlmodel import SQLModel, Field
 
 from .enums import UserRole
-from ..utils import \
+from utils import \
     at_least_one_uppercase_and_one_digit_password, \
     email_validator, \
     generate_registration_token, \
