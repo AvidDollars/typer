@@ -32,6 +32,17 @@ services:
       - .env.dev
     depends_on:
       - db
+  
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4200:4200"
+    volumes:
+      - ${PWD}/frontend:/app
+    depends_on:
+      - backend
 
 volumes:
   typer-backend-logs:

@@ -1,0 +1,15 @@
+FROM node:20-alpine3.19
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+COPY . /app
+
+RUN npm install -g @angular/cli
+
+RUN npm install
+
+ENTRYPOINT [ "ng", "serve" ]
+
+CMD [ "--host", "0.0.0.0", "--open" ]
