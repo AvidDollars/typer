@@ -1,17 +1,5 @@
 services:
 
-  backend:
-    build:
-      context: ./backend/
-      dockerfile: Dockerfile.dev
-    ports:
-      - "8000:8000"
-    volumes:
-      - typer-backend-logs:/logs
-      - ${PWD}/backend:/backend
-    env_file:
-      - .env.dev
-
   db:
     image: postgres:16.3-alpine
     restart: always
@@ -28,6 +16,20 @@ services:
       - .env.dev
     ports:
       - "5050:80"
+    depends_on:
+      - db
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - typer-backend-logs:/logs
+      - ${PWD}/backend:/backend
+    env_file:
+      - .env.dev
     depends_on:
       - db
 
