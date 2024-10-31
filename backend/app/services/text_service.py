@@ -1,11 +1,11 @@
 from pydantic import UUID4
 from sqlalchemy import and_, or_
 
-from ..constants import USER_TEXTS_MAX_COUNT
-from ..custom_exceptions import UserTextCountLimitException, TextNotFoundException
-from ..models import UserRole, TextDb
-from ..repositories.crud_operations import CrudOperations
-from ..utils import Pagination
+from constants import USER_TEXTS_MAX_COUNT
+from custom_exceptions import UserTextCountLimitException, TextNotFoundException
+from models import UserRole, TextDb
+from repositories.crud_operations import CrudOperations
+from utils import Pagination
 
 __all__ = ("TextService", )
 

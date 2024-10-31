@@ -1,5 +1,5 @@
 from .crud_operations import CrudOperations
-from ..db import Database
+from db import Database
 
 
 __all__ = ("TextRepository", )

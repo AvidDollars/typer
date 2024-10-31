@@ -2,10 +2,10 @@ from dependency_injector.wiring import Provide
 from dependency_injector.wiring import inject
 from fastapi import APIRouter, Depends
 
-from ..containers import Container
-from ..custom_exceptions import MissingCredentialsException
-from ..models import UserLogin
-from ..services import UserService
+from containers import Container
+from custom_exceptions import MissingCredentialsException
+from models import UserLogin
+from services import UserService
 
 router = APIRouter(
     prefix="/login", tags=["User"]

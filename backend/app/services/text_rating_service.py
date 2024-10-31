@@ -1,9 +1,9 @@
 from sqlalchemy.exc import IntegrityError
 
-from ..constants import UNIQUE_CONSTRAINT_VIOLATED
-from ..custom_exceptions import AlreadyRatedTextException, TextRatingNotFoundException
-from ..models import TextRatingDb
-from ..repositories import CrudOperations
+from constants import UNIQUE_CONSTRAINT_VIOLATED
+from custom_exceptions import AlreadyRatedTextException, TextRatingNotFoundException
+from models import TextRatingDb
+from repositories import CrudOperations
 
 __all__ = ("TextRatingService", )
 

@@ -8,13 +8,13 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlmodel import SQLModel
 
-from app.main import app
+from main import app
 
 # ↓↓↓ must be present, so that migration will create a new table in database ↓↓↓
-from app.models import user
-from app.models import text
-from app.models import typing_session
-from app.models import text_rating
+from models import user
+from models import text
+from models import typing_session
+from models import text_rating
 
 
 # this is the Alembic Config object, which provides

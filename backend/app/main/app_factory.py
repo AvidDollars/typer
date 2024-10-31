@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 
-from ..containers import Container
-from ..middleware.exception_handlers import log_server_errors, validation_error_handler
-from ..routers import router
+from containers import Container
+from middleware.exception_handlers import log_server_errors, validation_error_handler
+from routers import router
 
 __all__ = "create_app",
 

@@ -4,7 +4,7 @@ from typing import Any
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from pydantic import EmailStr
 
-from ..constants import EMAIL_TEMPLATE_DIR, REGISTER_TEMPLATE_FILE_NAME
+from constants import EMAIL_TEMPLATE_DIR, REGISTER_TEMPLATE_FILE_NAME
 
 __all__ = ("EmailService", "AbstractEmailService", "UserRegistrationEmailService")
 

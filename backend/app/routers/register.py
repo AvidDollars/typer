@@ -1,9 +1,9 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends
 
-from ..containers import Container
-from ..models import UserIn
-from ..services import UserRegistrationEmailService, UserService
+from containers import Container
+from models import UserIn
+from services import UserRegistrationEmailService, UserService
 
 router = APIRouter(
     prefix="/register", tags=["User"]

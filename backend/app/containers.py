@@ -4,11 +4,11 @@ from dependency_injector.containers import DeclarativeContainer, WiringConfigura
 from dependency_injector.providers import Configuration, Singleton, Resource, Factory
 from passlib.hash import argon2
 
-from .constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
-from .db import Database
-from .logger import get_logger
-from .repositories import UserRepository, TextRepository, TypingSessionRepository, TextRatingRepository
-from .services import \
+from constants import APP_DIR, CONFIG_FILE_NAME, LOG_DIR
+from db import Database
+from logger import get_logger
+from repositories import UserRepository, TextRepository, TypingSessionRepository, TextRatingRepository
+from services import \
     UserRegistrationEmailService, \
     UserService, \
     HashingService, \
@@ -22,7 +22,9 @@ class Container(DeclarativeContainer):
     """ dependency injection container """
 
     # WIRING CONFIG
-    wiring_config = WiringConfiguration(packages=[".routers", ".middleware", ".tests"])
+    # TODO: "tests" if env=test
+    #wiring_config = WiringConfiguration(packages=["routers", "middleware", "tests"])
+    wiring_config = WiringConfiguration(packages=["routers", "middleware"])
 
     # CONFIG
     config = Configuration(yaml_files=[path.join(APP_DIR, CONFIG_FILE_NAME)])

@@ -2,7 +2,7 @@ import re
 from functools import partial
 from typing import Callable
 
-from ..constants import EMAIL_VALIDATOR_REGEX
+from constants import EMAIL_VALIDATOR_REGEX
 
 __all__ = ("at_least_one_uppercase_and_one_digit_password", "email_validator")
 

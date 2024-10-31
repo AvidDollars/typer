@@ -5,11 +5,11 @@ from fastapi.requests import Request
 from fastapi.responses import Response
 from pydantic import UUID4
 
-from ..containers import Container
-from ..models import TextIn, TextDb, TextDetail, TextOut, UserRole
-from ..services import TextService
-from ..services.auth_service import required_authentication, optional_authentication
-from ..utils import Pagination
+from containers import Container
+from models import TextIn, TextDb, TextDetail, TextOut, UserRole
+from services import TextService
+from services.auth_service import required_authentication, optional_authentication
+from utils import Pagination
 
 router = APIRouter(
     prefix="/texts", tags=["Text"]
