@@ -25,6 +25,7 @@ jobs:
               run: |
                 mv ./frontend/* .
                 rm -rf ./frontend/
+                sudo chown -R $USER:$USER .
             
             - name: cache dependencies
               uses: actions/cache@v4
