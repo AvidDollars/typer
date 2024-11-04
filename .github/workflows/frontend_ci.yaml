@@ -33,4 +33,5 @@ jobs:
                 key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
             
             - run: npm ci
+            - run: npm install @angular/cli@18
             - run: ng test --browsers=ChromeHeadless --code-coverage
