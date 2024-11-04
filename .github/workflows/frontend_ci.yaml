@@ -11,8 +11,6 @@ env:
 jobs:
     run-tests:
         runs-on: ubuntu-latest
-        container:
-            image: zenika/alpine-chrome:with-node
 
         steps:
             - name: checkout frontend code
@@ -25,7 +23,6 @@ jobs:
               run: |
                 mv ./frontend/* .
                 rm -rf ./frontend/
-                sudo chown -R $USER:$USER .
             
             - name: cache dependencies
               uses: actions/cache@v4
