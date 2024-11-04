@@ -5,20 +5,32 @@ on:
         branches:
             - "*/frontend"
 
+env:
+    CACHE_KEY: node-deps
+
 jobs:
     run-tests:
         runs-on: ubuntu-latest
-        steps:
-            - name: install Angular 18.1.0
-              uses: actions/angular-github-actions
-              with:
-                version: 18.1.0
+        container:
+            image: node:20-alpine3.19
 
+        steps:
             - name: checkout frontend code
               uses: actions/checkout@v4
               with:
-                sparse-checkout: |
-                    ./frontend/
+                sparse-checkout: 'frontend'
+                sparse-checkout-cone-mode: false
+
+            - name: move files/folders to root
+              run: |
+                mv ./frontend/* .
+                rm -rf ./frontend/
+            
+            - name: cache dependencies
+              uses: actions/cache@v4
+              with:
+                path: ~/.npm
+                key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
             
             - run: npm ci
-            - run: npm run test
+            - run: npm test
