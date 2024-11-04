@@ -1,0 +1,34 @@
+name: run tests
+
+on:
+    push:
+        branches:
+            - "*/frontend"
+
+env:
+    CACHE_KEY: node-deps
+
+jobs:
+    run-tests:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: checkout frontend code
+              uses: actions/checkout@v4
+              with:
+                sparse-checkout: 'frontend'
+                sparse-checkout-cone-mode: false
+
+            - name: move files/folders to root
+              run: |
+                mv ./frontend/* .
+                rm -rf ./frontend/
+            
+            - name: cache dependencies
+              uses: actions/cache@v4
+              with:
+                path: ~/.npm
+                key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
+            
+            - run: npm ci
+            - run: npm test -- --browsers=ChromeHeadless --watch=false --code-coverage
