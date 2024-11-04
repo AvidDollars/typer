@@ -38,7 +38,7 @@ export class AuthService {
   initAutoLogout() {
     if (this.#jwtService.tokenIsValid) {
       const expiration = this.#jwtService.expirationInSeconds;
-      this.autoLogoutTimer = setTimeout(() => this.logout(), expiration)
+      this.autoLogoutTimer = setTimeout(() => this.logout(), expiration * 1000);
     }
   }
 
