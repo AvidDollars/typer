@@ -12,7 +12,7 @@ jobs:
     run-tests:
         runs-on: ubuntu-latest
         container:
-            image: node:20-alpine3.19
+            image: zenika/alpine-chrome:with-node
 
         steps:
             - name: checkout frontend code
@@ -34,5 +34,3 @@ jobs:
             
             - run: npm ci
             - run: npm test -- --browsers=ChromeHeadless --watch=false --code-coverage
-              env:
-                CHROME_BIN: chromium
