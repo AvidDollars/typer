@@ -33,6 +33,6 @@ jobs:
                 key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
             
             - run: npm ci
-            - run: |
-                export CHROME_BIN=chromium
-                npm test -- --browsers=ChromeHeadless --watch=false --code-coverage
+            - run: npm test -- --browsers=ChromeHeadless --watch=false --code-coverage
+              env:
+                CHROME_BIN: chromium
