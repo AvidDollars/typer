@@ -11,6 +11,9 @@ export class JwtTokenService {
     return new TokenPayload(rawToken);
   }
 
+  /**
+   * Valid JWT token as an input is expected.
+   */
   saveToken(rawToken: string) {
     localStorage.setItem("token", rawToken);
   }
