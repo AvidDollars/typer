@@ -33,4 +33,4 @@ jobs:
                 key: ${{ env.CACHE_KEY }}-${{ hashFiles('**/package-lock.json') }}
             
             - run: npm ci
-            - run: npm test
+            - run: ng test --browsers=ChromeHeadless --code-coverage
