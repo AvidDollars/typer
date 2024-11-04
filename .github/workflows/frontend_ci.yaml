@@ -1,0 +1,23 @@
+name: run tests
+
+on:
+    push:
+        branches:
+            - */frontend
+
+jobs:
+    run-tests:
+        runs-on: ubuntu-latest
+        steps:
+            - name: install Angular 18.1.0
+              uses: actions/angular-github-actions
+              with:
+                version: 18.1.0
+
+            - name: checkout frontend code
+              uses: actions/checkout@v4
+              with:
+                sparse-checkout: "frontend"
+            
+            - run: npm ci
+            - run: npm run test
