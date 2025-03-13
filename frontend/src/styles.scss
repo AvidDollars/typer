@@ -5,22 +5,30 @@
   :root {
     color: rgb(236, 236, 236);
     background-color: rgb(49, 49, 49);
-    --primary-color: rgb(19, 136, 130);
+    --primary-color: rgb(16, 82, 78);
+    --secondary-color: rgb(218, 218, 93);
+
+    nav li:hover {
+      cursor: pointer;
+    }
   }
 
   [data-theme="light"] {
     color: rgb(49, 49, 49);
     background-color: rgb(236, 236, 236);
     --primary-color: rgb(79, 155, 108);
+    --secondary-color: rgb(90, 90, 39);
   }
 
   [data-theme="blues"] {
     color: rgb(196, 196, 240);
     background-color: rgb(32, 32, 94);
     --primary-color: rgb(77, 77, 228);
+    --secondary-color: rgb(100, 161, 92);
   }
 }
 
 @theme {
   --color-primary: var(--primary-color);
+  --color-secondary: var(--secondary-color);
 }
