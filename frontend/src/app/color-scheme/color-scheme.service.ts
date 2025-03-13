@@ -18,9 +18,9 @@ export class ColorSchemeService {
   /**
    * Retrieves 'color-scheme' from localStorage. If the value is null or not in the allowed list, the 'dark' scheme is set.
    */
-  setColorScheme() {
-    const colorScheme = localStorage.getItem("color-scheme");
-    const schemeValue = (colorScheme === null || !(colorScheme in ColorScheme)) ? "dark" : colorScheme;
+  setColorScheme(value = "dark") {
+    const colorScheme = localStorage.getItem(this.keyValue);
+    const schemeValue = (colorScheme === null || !(colorScheme in ColorScheme)) ? value : colorScheme;
     this.htmlElement.setAttribute("data-theme", schemeValue);
   }
 }
