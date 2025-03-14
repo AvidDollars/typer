@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { TitleComponent } from './title.component';
 
 describe('TitleComponent', () => {
@@ -8,7 +8,8 @@ describe('TitleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TitleComponent]
+      imports: [TitleComponent],
+      providers: [provideExperimentalZonelessChangeDetection()],
     })
     .compileComponents();
 
@@ -17,7 +18,7 @@ describe('TitleComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', async () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });
