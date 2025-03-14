@@ -5,12 +5,14 @@
   :root {
     color: rgb(236, 236, 236);
     background-color: rgb(49, 49, 49);
-    --primary-color: rgb(16, 82, 78);
-    --secondary-color: rgb(218, 218, 93);
 
-    nav li:hover {
-      cursor: pointer;
-    }
+    --primary-color: rgb(16, 82, 78);
+    --primary-color-dark: rgb(13, 43, 41);
+    --primary-color-light: rgb(41, 122, 117);
+
+    --secondary-color: rgb(112, 112, 34);
+    --secondary-color-dark: rgb(58, 58, 17);
+    --secondary-color-light: rgb(160, 160, 77);
   }
 
   [data-theme="light"] {
@@ -18,6 +20,8 @@
     background-color: rgb(236, 236, 236);
     --primary-color: rgb(79, 155, 108);
     --secondary-color: rgb(90, 90, 39);
+    --secondary-color-dark: rgb(85, 85, 28);
+    --secondary-color-light: rgb(160, 160, 77);
   }
 
   [data-theme="blues"] {
@@ -25,10 +29,29 @@
     background-color: rgb(32, 32, 94);
     --primary-color: rgb(77, 77, 228);
     --secondary-color: rgb(100, 161, 92);
+    --secondary-color-dark: rgb(59, 109, 53);
+    --secondary-color-light: rgb(154, 206, 147);
+  }
+
+  nav a:hover,svg:hover {
+    cursor: pointer;
+  }
+
+  nav a,svg {
+    transition: all 0.5s linear;
+  }
+
+  button:hover {
+    cursor: pointer;
   }
 }
 
 @theme {
   --color-primary: var(--primary-color);
+  --color-primary-dark: var(--primary-color-dark);
+  --color-primary-light: var(--primary-color-light);
+
   --color-secondary: var(--secondary-color);
+  --color-secondary-dark: var(--secondary-color-dark);
+  --color-secondary-light: var(--secondary-color-light);
 }
