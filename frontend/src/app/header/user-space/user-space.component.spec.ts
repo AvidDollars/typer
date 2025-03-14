@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { UserSpaceComponent } from './user-space.component';
 
 describe('UserSpaceComponent', () => {
@@ -8,7 +8,8 @@ describe('UserSpaceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserSpaceComponent]
+      imports: [UserSpaceComponent],
+      providers: [provideExperimentalZonelessChangeDetection()],
     })
     .compileComponents();
 
