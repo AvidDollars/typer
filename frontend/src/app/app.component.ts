@@ -3,7 +3,6 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './header/header.component';
 import { ColorSchemeService } from './color-scheme/color-scheme.service';
 
-
 @Component({
     selector: 'app-root',
     imports: [
@@ -17,7 +16,6 @@ export class AppComponent implements OnInit {
   colorSchemeService = inject(ColorSchemeService);
 
   ngOnInit(): void {
-    this.colorSchemeService.setColorScheme("dark");
+    this.colorSchemeService.setColorScheme();
   }
-
 }
