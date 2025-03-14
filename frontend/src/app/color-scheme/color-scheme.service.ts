@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ColorScheme } from './schemes';
 
@@ -8,19 +7,25 @@ import { ColorScheme } from './schemes';
 })
 export class ColorSchemeService {
 
-  htmlElement = inject(DOCUMENT).documentElement;
-  keyValue = "color-scheme";
+  #htmlElement = inject(DOCUMENT).documentElement;
+  #keyValue = "color-scheme";
 
-  saveSchemeLocally(colorScheme: keyof typeof ColorScheme) {
-    localStorage.setItem(this.keyValue, colorScheme);
+  saveSchemeLocally(colorScheme: keyof typeof ColorScheme): void {
+    localStorage.setItem(this.#keyValue, colorScheme);
   }
 
   /**
-   * Retrieves 'color-scheme' from localStorage. If the value is null or not in the allowed list, the 'dark' scheme is set.
+   * If an argument is provided, it will be used as value for color scheme.
+   * If an argument is missing, it retrieves 'color-scheme' from localStorage.
+   * If the value from localStorage is null or not in the allowed list, the 'dark' scheme is set.
    */
-  setColorScheme(value = "dark") {
-    const colorScheme = localStorage.getItem(this.keyValue);
-    const schemeValue = (colorScheme === null || !(colorScheme in ColorScheme)) ? value : colorScheme;
-    this.htmlElement.setAttribute("data-theme", schemeValue);
+  setColorScheme(value: null | keyof typeof ColorScheme = null): void {
+    if (value !== null) {
+      this.#htmlElement.setAttribute("data-theme", value);
+      return;
+    }
+    const colorScheme = localStorage.getItem(this.#keyValue);
+    const schemeValue = (colorScheme === null || !(colorScheme in ColorScheme)) ? "dark" : colorScheme;
+    this.#htmlElement.setAttribute("data-theme", schemeValue);
   }
 }

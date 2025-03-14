@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   colorSchemeService = inject(ColorSchemeService);
 
   ngOnInit(): void {
-    this.colorSchemeService.setColorScheme();
+    this.colorSchemeService.setColorScheme("dark");
   }
 
 }
