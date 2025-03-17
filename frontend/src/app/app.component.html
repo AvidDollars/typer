@@ -2,9 +2,28 @@
 
 <!-- changes color scheme -->
 <button (click)="colorSchemeService.rotateColorScheme()" class="absolute bottom-2 left-2">
-  <img src="colorkit.svg" alt="schange color scheme" class="
-    w-10 md:w-14 lg:w-16
-  ">
+  <img src="colorkit.svg" alt="schange color scheme" class="w-10 md:w-14 lg:w-16">
 </button>
 
-<router-outlet />
+<main class="
+  mt-16 h-[400px] mx-4
+  grid grid-cols-6 grid-rows-6
+">
+
+  @if (visibleHeader()) {
+  <nav class="
+      grid grid-cols-3
+      col-span-full
+      md:col-start-2 md:col-span-4 md:row-start-1
+      lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:rounded-t-3xl
+    ">
+    @for (endpoint of ["login", "register", "reset"]; track endpoint) {
+    <button [routerLink]="['/', endpoint]" routerLinkActive="bg-secondary rounded-t-3xl" class="text-xl md:text-2xl">{{
+      endpoint }}</button>
+    }
+  </nav>
+  }
+
+  <router-outlet />
+
+</main>
