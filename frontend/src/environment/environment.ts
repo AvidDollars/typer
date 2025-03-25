@@ -4,5 +4,9 @@ export const environment = {
 
     route(path: string): string {
         return `${this.BACKEND_BASE_URL}/${path}`;
+    },
+
+    get registrationUrl(): string {
+      return this.route("register");
     }
 }
