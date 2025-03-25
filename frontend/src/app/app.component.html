@@ -6,7 +6,7 @@
 </button>
 
 <main class="
-  mt-16 h-[400px] mx-4
+  mt-16 h-[550px] mx-4
   grid grid-cols-6 grid-rows-6
 ">
 
@@ -18,7 +18,7 @@
       lg:col-start-3 lg:col-span-2 lg:row-start-1 lg:rounded-t-3xl
     ">
     @for (endpoint of ["login", "register", "reset"]; track endpoint) {
-    <button [routerLink]="['/', endpoint]" routerLinkActive="bg-secondary rounded-t-3xl" class="text-xl md:text-2xl">{{
+    <button [routerLink]="['/', endpoint]" routerLinkActive="bg-secondary rounded-t-xl" class="text-xl md:text-2xl">{{
       endpoint }}</button>
     }
   </nav>
