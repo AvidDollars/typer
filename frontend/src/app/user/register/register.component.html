@@ -1,1 +1,67 @@
-<p>register works!</p>
+@let invalidForm = submittedInvalidForm();
+@let submitResult = submitAction$ | async;
+
+<ng-container [formGroup]="registration">
+
+  <!-- NAME -->
+  <div class="control">
+    <label for="name">Name: </label>
+    <input id="name" type="text" formControlName="name">
+  </div>
+
+  <!-- EMAIL -->
+  <div class="control row-start-2">
+    <label for="email">Email: </label>
+    <input id="email" type="text" formControlName="email">
+  </div>
+
+  <div formGroupName="password" class="control-group [&>div]:h-1/2">
+
+    <!-- PASSWORD -->
+    <div class="control">
+      <label for="value">Password
+        <span>(show
+          <input type="checkbox" name="visible-pwd" id="visible-pwd" [value]="passwordVisible()"
+            (change)="togglePasswordVisibility()">
+        </span>):
+      </label>
+
+      <input id="value" [type]="passwordVisible() ? 'text' : 'password'" formControlName="value">
+    </div>
+
+    <!-- CONFIRM PASSWORD -->
+    <div class="control">
+      <label for="confirm">Confirm Password:</label>
+      <input id="confirm" type="password" formControlName="confirm">
+    </div>
+  </div>
+
+  <!-- SUBMIT BUTTON -->
+  <button class="
+    row-start-5 col-start-2 col-span-4 row-span-2 place-self-center
+    w-3/4 h-1/2 rounded-xl text-xl md:text-2xl lg:text-3xl
+  " [class]="{
+      'bg-primary': !invalidForm,
+      'hover:bg-primary-dark': !invalidForm,
+      'bg-invalid': invalidForm,
+      'hover:bg-invalid': invalidForm
+    }" type="submit">
+
+    <!-- TEXT / LOADING SPINNER INSIDE BUTTON  -->
+    @if (requestActive()) {
+    <div class="spinner m-auto"></div>
+    } @else {
+    {{ submitBtnText() }}
+    }
+  </button>
+
+  <!-- SUBMISSION RESULT -->
+  @if (submitResult) {
+  <p [class]="{
+      'row-start-7': true, 'col-span-full': true, 'place-self-center': true, 'p-2': true, 'rounded-md': true,
+      'bg-invalid': submitResult.state !== 'submitOk',
+      'bg-valid': submitResult.state === 'submitOk'
+
+    }">{{ submitResult.message }}</p>
+  }
+</ng-container>
