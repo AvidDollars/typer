@@ -13,7 +13,7 @@ from utils import \
 
 
 class UserBase(SQLModel):
-    name: str = Field(sa_column_kwargs={"unique": False})
+    name: str = Field(sa_column_kwargs={"unique": True})
     email: str = Field(sa_column_kwargs={"unique": True})
 
     @validator("name")
