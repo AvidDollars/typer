@@ -33,7 +33,31 @@ git push origin +user/frontend
 ## Modifying database schema / running migrations:
 
 **Task**:
-todo
+You need to change schema of one of the tables (in this case **adding unique contraint**)
 
 **Solution**:
-todo
+1. **change model** (in this case **add unique name constraint**):
+![adding new constraint](02_add_unique_constraint.png)
+
+2. goto to the running container for backend:
+```bash
+# 769 -> 1st 3 letters of running backend container
+docker exec -it 769 bash
+```
+
+3. run migration:
+```bash
+# you must be inside "/backend" folder in order to run alembic commands:
+cd /backend
+
+# create new revision and provide description, e.g.:
+alembic revision --autogenerate -m "add 'unique name' constraint on 'users' table"
+
+# run the migration:
+alembic upgrade head
+```
+
+4. log into running **pgAdmin** container (**localhost:5050**) and check the changes:
+![change in table](02_new_contraint.png)
+
+5. commit changes (file where model was changed + new migration file)
