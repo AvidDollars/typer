@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, computed } from '@angular/core';
 import { objectsAreSame, form_styles, mustBeEqual, retrieveErrorMessage, throttledFormSubmit$ } from '../shared';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { catchError, concatMap, finalize, map, Observable, of, scan, timer } from 'rxjs';
 import { environment } from '../../../environment/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { IRegFormDataOut, IRegFormDataRaw, SubmissionResult, RegFormObject, regFormBase } from '../models';
+import { IRegFormDataRaw, SubmissionResult, RegFormObject, regFormBase } from '../models';
 import { AsyncPipe } from '@angular/common';
 
 @Component({
@@ -20,11 +20,11 @@ import { AsyncPipe } from '@angular/common';
 export class RegisterComponent {
 
   http = inject(HttpClient);
-  formElement: HTMLFormElement = inject(ElementRef<HTMLFormElement>).nativeElement;
+  formElement: HTMLFormElement = inject(ElementRef).nativeElement;
 
   passwordVisible = signal(false); // toggled by "show" checkbox input
   submittedInvalidForm = signal(false);
-  submitBtnText = signal("submit");
+  submitBtnText = computed(() => this.submittedInvalidForm() === true ? "form is invalid!" : "submit");
   requestActive = signal(false); // if POST /register is active
   registrationServerResponse = "server error"; // re-used in "trySendRequest" method in "server_responded_with_error" clause
 
@@ -57,21 +57,20 @@ export class RegisterComponent {
     // POST /register
     else {
       const { name, email, password: { value: password } } = formObject.rawData;
-      const data: IRegFormDataOut = { name, email, password };
       this.requestActive.set(true);
 
-      return this.http.post<SubmissionResult>(environment.registrationUrl, data)
+      return this.http.post<SubmissionResult>(environment.registrationUrl, { name, email, password })
         .pipe(
-          map(_value => {
-            this.registration.reset();
-            return { state: "submitOk", message: "Submitted! Check your email :)" } as SubmissionResult;
-          }),
+          map(_value => ({ state: "submitOk", message: "Submitted! Check your email :)" }) as SubmissionResult),
           catchError((err: HttpErrorResponse) => {
             const message = retrieveErrorMessage(err);
             this.registrationServerResponse = message;
             return of<SubmissionResult>({ state: "submitFailed", message });
           }),
-          finalize(() => this.requestActive.set(false)),
+          finalize(() => {
+            this.registration.reset();
+            this.requestActive.set(false);
+          })
         )
     }
   }
@@ -93,14 +92,8 @@ export class RegisterComponent {
     this.passwordVisible.update(val => !val);
   }
 
-  showErrMsgOnInvalidSubmit(message = "Form is invalid!") {
+  showErrMsgOnInvalidSubmit() {
     this.submittedInvalidForm.set(true);
-    this.submitBtnText.set(message);
-
-    timer(500)
-      .subscribe(_ => {
-        this.submittedInvalidForm.set(false);
-        this.submitBtnText.set("submit");
-      });
+    timer(500).subscribe(() => this.submittedInvalidForm.set(false));
   }
 }
