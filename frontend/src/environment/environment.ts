@@ -8,5 +8,9 @@ export const environment = {
 
     get registrationUrl(): string {
       return this.route("register");
+    },
+
+    activateUrl(token: string): string {
+      return this.route(`activate/${token}`);
     }
 }

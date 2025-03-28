@@ -11,15 +11,6 @@ export interface IRegFormDataRaw {
 }
 
 /**
- * Shape of data for sending "POST /register" request
- */
-export interface IRegFormDataOut {
-  name: string;
-  email: string;
-  password: string;
-}
-
-/**
  * Result of "submit" action
  */
 export interface SubmissionResult {
@@ -44,3 +35,11 @@ export const regFormBase: RegFormObject = {
   dataIsValid: false,
   dataUnchanged: false,
 };
+
+/**
+ * Result of account activation (GET /activate/<activation_token>)
+ */
+export interface ActivationResult {
+  activated: boolean;
+  detail: string;
+}

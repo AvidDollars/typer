@@ -1,1 +1,2 @@
-<p>activate works!</p>
+@let activation = serverResponse$ | async;
+<p [class]="activation?.activated ? 'bg-valid' : 'bg-invalid' ">{{ activation?.detail }}</p>
