@@ -3,7 +3,7 @@ import { NavigationStart, Router, RouterLink, RouterLinkActive, RouterOutlet } f
 import { HeaderComponent } from './header/header.component';
 import { ColorSchemeService } from './color-scheme/color-scheme.service';
 import { filter, map } from 'rxjs';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,6 @@ export class AppComponent implements OnInit {
   #formURL = this.router.events.pipe(
     filter(event => event instanceof NavigationStart),
     map(event => ["/login", "/register", "/reset"].some(endopoint => endopoint === event.url)),
-    takeUntilDestroyed(),
   )
   visibleHeader = toSignal(this.#formURL); // form header is visible only if you are on /login | /register | /reset url
 
