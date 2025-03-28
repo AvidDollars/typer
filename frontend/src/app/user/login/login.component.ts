@@ -8,7 +8,7 @@ import { form_styles } from '../shared';
   styleUrl: './login.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: form_styles()
+    class: `${form_styles()} rounded-tr-xl`
   }
 })
 export class LoginComponent {

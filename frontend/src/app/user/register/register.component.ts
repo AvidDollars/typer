@@ -14,7 +14,7 @@ import { AsyncPipe } from '@angular/common';
   styleUrl: './register.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: form_styles()
+    class: `${form_styles()} rounded-t-xl`
   }
 })
 export class RegisterComponent {

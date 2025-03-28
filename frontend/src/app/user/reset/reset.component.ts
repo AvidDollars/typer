@@ -8,7 +8,7 @@ import { form_styles } from '../shared';
   styleUrl: './reset.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    class: form_styles()
+    class: `${form_styles()} rounded-tl-xl`
   }
 })
 export class ResetComponent {
