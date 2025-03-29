@@ -1,6 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { ValidatorFn, AbstractControl, FormGroup } from "@angular/forms";
-import { Observable, fromEvent, map, throttleTime, tap, scan } from 'rxjs';
+import { ValidatorFn, AbstractControl } from "@angular/forms";
+import { fromEvent, throttleTime } from 'rxjs';
+import { ElementRef, inject, signal, computed } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { map, Observable, timer } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 /**
  * CSS classes for /login /register /reset forms
@@ -88,4 +91,30 @@ export function throttledFormSubmit$(
       }),
       throttleTime(throttleMs),
     )
+}
+
+/**
+ * Base class for /login /register /reset components
+ */
+export abstract class FormComponentBase {
+
+  abstract formUrl: string;
+  abstract formGroup: FormGroup;
+
+  http = inject(HttpClient);
+  formElement: HTMLFormElement = inject(ElementRef).nativeElement;
+  passwordVisible = signal(false); // toggled by "show" checkbox input
+  submittedInvalidForm = signal(false);
+  submitBtnText = computed(() => this.submittedInvalidForm() === true ? "form is invalid!" : "submit");
+  requestActive = signal(false); // if POST /register is active
+  serverResponse = "server error"; // re-used in "trySendRequest" method in "server_responded_with_error" clause
+
+  togglePasswordVisibility() {
+    this.passwordVisible.update(val => !val);
+  }
+
+  showErrMsgOnInvalidSubmit() {
+    this.submittedInvalidForm.set(true);
+    timer(500).subscribe(() => this.submittedInvalidForm.set(false));
+  }
 }
