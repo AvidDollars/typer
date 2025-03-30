@@ -1,9 +1,9 @@
-import { ValidatorFn, AbstractControl } from "@angular/forms";
+import { ValidatorFn, AbstractControl, FormGroup } from "@angular/forms";
 import { fromEvent, throttleTime } from 'rxjs';
 import { ElementRef, inject, signal, computed } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { map, Observable, timer } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, finalize, map, Observable, of, timer } from 'rxjs';
+import { SubmissionResult, FormObject } from './models';
 
 /**
  * CSS classes for /login /register /reset forms
@@ -96,9 +96,11 @@ export function throttledFormSubmit$(
 /**
  * Base class for /login /register /reset components
  */
-export abstract class FormComponentBase {
+export abstract class FormComponentBase<Raw, Out> {
 
+  successMessage = "submitted!"; // on valid submit
   abstract formUrl: string;
+  abstract formObject: FormObject<Raw, Out>;
   abstract formGroup: FormGroup;
 
   http = inject(HttpClient);
@@ -116,5 +118,42 @@ export abstract class FormComponentBase {
   showErrMsgOnInvalidSubmit() {
     this.submittedInvalidForm.set(true);
     timer(500).subscribe(() => this.submittedInvalidForm.set(false));
+  }
+
+  /**
+   * Sends form data to the API. Returns "SubmissionResult" as an observable object.
+   */
+  trySendRequest = (): Observable<SubmissionResult> => {
+    const server_responded_with_error = this.formObject.dataIsValid && this.formObject.dataUnchanged;
+
+    if (!this.formObject.dataIsValid) {
+      this.showErrMsgOnInvalidSubmit();
+      return of({ state: "invalidForm", message: "some of the form fields are invalid!" });
+    }
+
+    else if (server_responded_with_error) {
+      return of({ state: "submitFailed", message: this.serverResponse });
+    }
+
+    // data is valid and changed -> sent request
+    else {
+      this.requestActive.set(true);
+
+      return this.http.post<SubmissionResult>(this.formUrl, this.formObject.outData)
+        .pipe(
+          map(_value => {
+            this.formGroup.reset();
+            return { state: "submitOk", message: this.successMessage } as SubmissionResult;
+          }),
+          catchError((err: HttpErrorResponse) => {
+            const message = retrieveErrorMessage(err);
+            this.serverResponse = message;
+            return of<SubmissionResult>({ state: "submitFailed", message });
+          }),
+          finalize(() => {
+            this.requestActive.set(false);
+          })
+        )
+    }
   }
 }
