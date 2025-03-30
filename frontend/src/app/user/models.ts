@@ -27,5 +27,5 @@ export abstract class FormObject<Raw, Out> {
   dataUnchanged = false;
 
   abstract rawData: Raw;
-  abstract get outData(): Out;
+  abstract get outData(): Out; // takes raw data and creates an object to be sent in HTTP request
 }
