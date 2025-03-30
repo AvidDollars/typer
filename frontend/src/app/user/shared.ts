@@ -1,9 +1,7 @@
 import { ValidatorFn, AbstractControl, FormGroup } from "@angular/forms";
-import { fromEvent, throttleTime } from 'rxjs';
-import { ElementRef, inject, signal, computed } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, finalize, map, Observable, of, timer } from 'rxjs';
-import { SubmissionResult, FormObject } from './models';
+import { HttpErrorResponse } from '@angular/common/http';
+import { map, Observable, scan, fromEvent, throttleTime } from 'rxjs';
+import { FormObject } from './models';
 
 /**
  * CSS classes for /login /register /reset forms
@@ -76,13 +74,14 @@ export function objectsAreSame(objA: object, objB: object): boolean {
 
 /**
  * Attaches "submit" action on provided form element.
- * Returns throttled FormGroup provided as second argument.
+ * Returns throttled FormObject whose state is being tracked in "scan" rxjs operator.
  */
-export function throttledFormSubmit$(
+export function throttledFormSubmit<Raw extends object, Out extends object>(
   form: HTMLFormElement,
   formGroup: FormGroup,
-  throttleMs = 1000
-): Observable<FormGroup> {
+  formObject: FormObject<Raw, Out>,
+  throttleMs = 1000,
+): Observable<FormObject<Raw, Out>> {
   return fromEvent<SubmitEvent>(form, "submit")
     .pipe(
       map(event => {
@@ -90,70 +89,18 @@ export function throttledFormSubmit$(
         return formGroup;
       }),
       throttleTime(throttleMs),
+
+      // To see if current form data is changed and valid.
+      // If data is valid but unchanged => HTTP request should not be sent.
+      scan((accumulated: FormObject<Raw, Out>, current: FormGroup) => {
+        const currentRawData = current.getRawValue() as Raw;
+        const dataUnchanged = objectsAreSame(currentRawData, accumulated.rawData);
+
+        formObject.dataIsValid = current.valid;
+        formObject.dataUnchanged = dataUnchanged;
+        formObject.rawData = currentRawData;
+
+        return formObject;
+      }, formObject),
     )
-}
-
-/**
- * Base class for /login /register /reset components
- */
-export abstract class FormComponentBase<Raw, Out> {
-
-  successMessage = "submitted!"; // on valid submit
-  abstract formUrl: string;
-  abstract formObject: FormObject<Raw, Out>;
-  abstract formGroup: FormGroup;
-
-  http = inject(HttpClient);
-  formElement: HTMLFormElement = inject(ElementRef).nativeElement;
-  passwordVisible = signal(false); // toggled by "show" checkbox input
-  submittedInvalidForm = signal(false);
-  submitBtnText = computed(() => this.submittedInvalidForm() === true ? "form is invalid!" : "submit");
-  requestActive = signal(false); // if POST /register is active
-  serverResponse = "server error"; // re-used in "trySendRequest" method in "server_responded_with_error" clause
-
-  togglePasswordVisibility() {
-    this.passwordVisible.update(val => !val);
-  }
-
-  showErrMsgOnInvalidSubmit() {
-    this.submittedInvalidForm.set(true);
-    timer(500).subscribe(() => this.submittedInvalidForm.set(false));
-  }
-
-  /**
-   * Sends form data to the API. Returns "SubmissionResult" as an observable object.
-   */
-  trySendRequest = (): Observable<SubmissionResult> => {
-    const server_responded_with_error = this.formObject.dataIsValid && this.formObject.dataUnchanged;
-
-    if (!this.formObject.dataIsValid) {
-      this.showErrMsgOnInvalidSubmit();
-      return of({ state: "invalidForm", message: "some of the form fields are invalid!" });
-    }
-
-    else if (server_responded_with_error) {
-      return of({ state: "submitFailed", message: this.serverResponse });
-    }
-
-    // data is valid and changed -> sent request
-    else {
-      this.requestActive.set(true);
-
-      return this.http.post<SubmissionResult>(this.formUrl, this.formObject.outData)
-        .pipe(
-          map(_value => {
-            this.formGroup.reset();
-            return { state: "submitOk", message: this.successMessage } as SubmissionResult;
-          }),
-          catchError((err: HttpErrorResponse) => {
-            const message = retrieveErrorMessage(err);
-            this.serverResponse = message;
-            return of<SubmissionResult>({ state: "submitFailed", message });
-          }),
-          finalize(() => {
-            this.requestActive.set(false);
-          })
-        )
-    }
-  }
 }
