@@ -22,10 +22,15 @@ export interface RegFormDataOut {
 }
 
 /**
- * instance of RegFormObject to be used as the seed in rxjs "scan" operator
+ * Implementation of FormObject for /register endpoint
  */
-export const regFormBase: FormObject<RegFormDataRaw> = {
-  rawData: { name: "", email: "", password: { value: "", confirm: "" } },
-  dataIsValid: false,
-  dataUnchanged: false,
-};
+export class RegFormObject extends FormObject<RegFormDataRaw, RegFormDataOut> {
+
+  rawData = { name: "", email: "", password: { value: "", confirm: "" } };
+
+  get outData(): RegFormDataOut {
+    const { name, email, password: { value } } = this.rawData;
+    return { name, email, password: value };
+  }
+
+}

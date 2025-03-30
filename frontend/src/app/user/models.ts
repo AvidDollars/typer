@@ -19,10 +19,13 @@ export interface ActivationResult {
 }
 
 /**
- * Form object to be used in 'trySendRequest' method
+ * Base class for /activate, /login and /register endpoints
  */
-export interface FormObject<T> {
-  rawData: T;
-  dataIsValid: boolean;
-  dataUnchanged: boolean
+export abstract class FormObject<Raw, Out> {
+
+  dataIsValid = false;
+  dataUnchanged = false;
+
+  abstract rawData: Raw;
+  abstract get outData(): Out;
 }
