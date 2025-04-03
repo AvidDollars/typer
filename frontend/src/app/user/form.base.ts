@@ -10,7 +10,11 @@ import { throttledFormSubmit, retrieveErrorMessage } from "./shared";
  * "Raw" generic param: raw data from FormGroup
  * "Out" generic param: data to be used in HTTP request
  */
-export abstract class FormComponentBase<Raw extends object, Out extends object> {
+export abstract class FormComponentBase<
+  Raw extends object,
+  Out extends object,
+  Res = void, // shape of the HTTP response
+> {
 
   http = inject(HttpClient);
   formElement: HTMLFormElement = inject(ElementRef).nativeElement;
@@ -23,6 +27,7 @@ export abstract class FormComponentBase<Raw extends object, Out extends object> 
   submitBtnText = computed(() => this.submittedInvalidForm() === true ? "form is invalid!" : "submit");
   requestActive = signal(false); // if POST /register is active
   serverResponse = "server error"; // re-used in "trySendRequest" method in "server_responded_with_error" clause
+  responseHandler?: (res: Res) => void; // handles successful HTTP responses
 
   constructor(
     public formObject: FormObject<Raw, Out>,
@@ -62,10 +67,12 @@ export abstract class FormComponentBase<Raw extends object, Out extends object> 
     else {
       this.requestActive.set(true);
 
-      return this.http.post<SubmissionResult>(this.formUrl, this.formObject.outData)
+      return this.http.post<Res>(this.formUrl, this.formObject.outData)
         .pipe(
-          map(_value => {
+          map(value => {
             this.formGroup.reset();
+            this.responseHandler?.(value); // response data handler (e.g. handling JWT token for /login)
+
             return { state: "submitOk", message: this.successMessage } as SubmissionResult;
           }),
           catchError((err: HttpErrorResponse) => {
