@@ -12,5 +12,9 @@ export const environment = {
 
     activateUrl(token: string): string {
       return this.route(`activate/${token}`);
+    },
+
+    get loginUrl(): string {
+      return this.route("login");
     }
 }
