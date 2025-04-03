@@ -1,1 +1,52 @@
-<p>login works</p>
+@let invalidForm = submittedInvalidForm();
+@let submitResult = submitAction$ | async;
+
+<ng-container [formGroup]="formGroup">
+
+  <!-- NAME OR EMAIL -->
+  <div class="control row-start-2">
+    <label for="user">Name or email: </label>
+    <input id="user" type="text" formControlName="user">
+  </div>
+
+  <!-- PASSWORD -->
+  <div class="control row-start-3">
+    <label for="password">Password
+      <span>(show
+        <input type="checkbox" name="password" id="password" [value]="passwordVisible()"
+          (change)="togglePasswordVisibility()">
+      </span>):
+    </label>
+
+    <input id="password" [type]="passwordVisible() ? 'text' : 'password'" formControlName="password">
+  </div>
+
+  <!-- SUBMIT BUTTON -->
+  <button class="
+    row-start-5 col-start-2 col-span-4 row-span-2 place-self-center
+    w-3/4 h-1/2 rounded-xl text-xl md:text-2xl lg:text-3xl
+  " [class]="{
+      'bg-primary': !invalidForm,
+      'hover:bg-primary-dark': !invalidForm,
+      'bg-invalid': invalidForm,
+      'hover:bg-invalid': invalidForm
+    }" type="submit">
+
+    <!-- TEXT / LOADING SPINNER INSIDE BUTTON  -->
+    @if (requestActive()) {
+    <div class="spinner m-auto"></div>
+    } @else {
+    {{ submitBtnText() }}
+    }
+  </button>
+
+  <!-- SUBMISSION RESULT -->
+  @if (submitResult) {
+  <p [class]="{
+      'row-start-7': true, 'col-span-full': true, 'place-self-center': true, 'p-2': true, 'rounded-md': true,
+      'bg-invalid': submitResult.state !== 'submitOk',
+      'bg-valid': submitResult.state === 'submitOk'
+
+    }">{{ submitResult.message }}</p>
+  }
+</ng-container>
