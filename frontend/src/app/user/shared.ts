@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, FormGroup } from "@angular/forms";
+import { ValidatorFn, AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
 import { map, Observable, scan, fromEvent, throttleTime } from 'rxjs';
 import { FormObject } from './models';
@@ -59,8 +59,8 @@ export function retrieveErrorMessage(error: HttpErrorResponse): string {
   } else {
     // TODO: logging
     const message = "unsuccessful action";
-    console.log(message);
-    console.log(error);
+    console.error(message);
+    console.error(error);
     return message;
   }
 }
