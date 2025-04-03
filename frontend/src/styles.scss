@@ -75,3 +75,34 @@
   --color-invalid: var(--color-invalid);
   --color-valid: var(--color-valid);
 }
+
+// FOR SUBMITTING FORMS
+// FROM https://10015.io/tools/css-loader-generator
+.spinner {
+  width: 50px;
+  height: 50px;
+  display: grid;
+  animation: spinner-plncf9 4s infinite;
+}
+
+.spinner::before,
+.spinner::after {
+  content: "";
+  grid-area: 1/1;
+  border: 9px solid;
+  border-radius: 50%;
+  border-color: var(--color-secondary-light) var(--color-primary-dark);
+  mix-blend-mode: darken;
+  animation: spinner-plncf9 1s infinite linear;
+}
+
+.spinner::after {
+  border-color: var(--color-secondary-light);
+  animation-direction: reverse;
+}
+
+@keyframes spinner-plncf9 {
+  100% {
+     transform: rotate(1turn);
+  }
+}
