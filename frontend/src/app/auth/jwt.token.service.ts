@@ -44,7 +44,7 @@ export class JwtTokenService {
 
   get tokenIsValid(): boolean {
     const token = this.getToken();
-    
+
     if (token === null) {
       return false;
     }
