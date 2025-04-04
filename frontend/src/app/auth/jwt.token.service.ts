@@ -7,6 +7,8 @@ import { TokenPayload } from './models';
 })
 export class JwtTokenService {
 
+  #key = "token"
+
   extractPayload(rawToken: string): TokenPayload {
     return new TokenPayload(rawToken);
   }
@@ -15,15 +17,15 @@ export class JwtTokenService {
    * Valid JWT token as an input is expected.
    */
   saveToken(rawToken: string) {
-    localStorage.setItem("token", rawToken);
+    localStorage.setItem(this.#key, rawToken);
   }
 
   getToken(): string | null {
-    return localStorage.getItem("token");
+    return localStorage.getItem(this.#key);
   }
 
   deleteToken() {
-    localStorage.removeItem("token");
+    localStorage.removeItem(this.#key);
   }
 
   /**
