@@ -3,8 +3,11 @@
 @layer base {
   // dark mode is the default color scheme
   :root {
+    --bg-color: rgb(49, 49, 49);
+    --bg-color-light: rgb(78, 78, 78);
+
     color: rgb(236, 236, 236);
-    background-color: rgb(49, 49, 49);
+    background-color: var(--bg-color);
 
     --primary-color-light: rgb(41, 122, 117);
     --primary-color: rgb(16, 82, 78);
@@ -19,8 +22,11 @@
   }
 
   [data-theme="light"] {
+    --bg-color: rgb(236, 236, 236);
+    --bg-color-light: rgb(255, 255, 255);
+
     color: rgb(49, 49, 49);
-    background-color: rgb(236, 236, 236);
+    background-color: var(--bg-color);
 
     --primary-color-light: rgb(107, 179, 134);
     --primary-color: rgb(79, 155, 108);
@@ -35,8 +41,11 @@
   }
 
   [data-theme="blues"] {
+    --bg-color: rgb(32, 32, 94);
+    --bg-color-light: rgb(48, 48, 119);
+
     color: rgb(196, 196, 240);
-    background-color: rgb(32, 32, 94);
+    background-color: var(--bg-color);
 
     --primary-color-light: rgb(115, 115, 221);
     --primary-color: rgb(77, 77, 228);
@@ -74,6 +83,8 @@
 
   --color-invalid: var(--color-invalid);
   --color-valid: var(--color-valid);
+
+  --color-bg-light: var(--bg-color-light);
 }
 
 // FOR SUBMITTING FORMS
