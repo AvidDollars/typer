@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { interval, map, scan, takeWhile } from 'rxjs';
+import { BlinkingCursorComponent } from "../../blinking-cursor/blinking-cursor.component";
 
 @Component({
   selector: 'app-title',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, BlinkingCursorComponent],
   templateUrl: './title.component.html',
   styleUrl: './title.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
