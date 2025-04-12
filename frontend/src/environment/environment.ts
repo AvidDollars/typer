@@ -16,5 +16,17 @@ export const environment = {
 
     get loginUrl(): string {
       return this.route("login");
+    },
+
+    text(textId: string): string {
+      return this.route(`texts/${textId}`);
+    },
+
+    // TODO: retrieve default text based on the query: "select id from texts where is_public = true limit 1"
+    // current value is hardcoded...
+    get defaultTextId(): string {
+      //shortest: bb461796-fe3c-4258-87ed-a3d9e4820f7a
+      //normal len: f9556879-8ddb-493f-a256-1c59c4b0a523
+      return "bb461796-fe3c-4258-87ed-a3d9e4820f7a";
     }
 }
