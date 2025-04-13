@@ -1,0 +1,4 @@
+// TODO: disable text selection with "Ctrl + Shift + Left arrow" / "Ctrl + A"
+textarea::selection {
+  background-color: transparent;
+}
