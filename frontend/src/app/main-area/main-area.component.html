@@ -1,5 +1,8 @@
-<!-- RETRIEVE FOCUS ON TEXTAREA -->
-{{ textareaFocus$ | async }}
+<!-- INIT TEXTAREA -->
+{{ initTextarea$ | async }}
+
+<!-- CLOCK -->
+<p class="absolute bottom-0">clock: {{ clock$ | async }}</p>
 
 <!-- VARIABLES -->
 @let error = textLoaderService.error();

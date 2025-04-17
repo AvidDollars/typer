@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
-import { filter, fromEvent, map, scan, takeWhile, finalize, timer } from 'rxjs';
+import { filter, map, scan, takeWhile, finalize, timer, interval, Subject, fromEvent, takeUntil, startWith, concatMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { TextLoaderService } from './text-loader.service';
 import { discardIrrelevantKeys, extractKey } from './utils';
@@ -24,13 +24,6 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class MainAreaComponent implements OnInit, OnDestroy {
 
-  hostElement = inject(ElementRef).nativeElement as HTMLElement;
-  textareaElement = viewChild<ElementRef<HTMLTextAreaElement>>("textarea");
-  textareaFocus$ = toObservable(this.textareaElement).pipe( // to retrieve lost focus on textarea
-    filter(value => value != undefined),
-    map(textarea => textarea.nativeElement.focus()),
-  );
-
   // TODO: create confetti service
   confetti = new JSConfetti(); // confetti at the end of typing session
 
@@ -39,8 +32,23 @@ export class MainAreaComponent implements OnInit, OnDestroy {
   characterArray: string[] = [];
   finishedTyping = signal(false);
 
-  // TYPING STREAM
-  typing$ = fromEvent<KeyboardEvent>(this.hostElement, "keydown").pipe(
+  hostElement = inject(ElementRef).nativeElement as HTMLElement;
+  textareaElement = viewChild<ElementRef<HTMLTextAreaElement>>("textarea");
+
+  initTextarea$ = toObservable(this.textareaElement).pipe(
+    filter(value => value != undefined),
+    map(textarea => {
+      const element = textarea.nativeElement;
+      element.focus(); // to retrieve lost focus on textarea when going to a different page
+      element.addEventListener("input", this.initTypingSession); // triggers "typing$" and "clock$"
+    }),
+  );
+
+  // TYPING SESSION TRIGGERS
+  startTyping$ = new Subject<void>();
+  endTyping$ = new Subject<void>();
+
+  typingStream$ = fromEvent<KeyboardEvent>(this.hostElement, "keydown").pipe(
     filter(discardIrrelevantKeys), // to filter out "Shift" / "CapsLock" / etc...
     map(extractKey),
     scan((acc, key) => {
@@ -59,8 +67,10 @@ export class MainAreaComponent implements OnInit, OnDestroy {
       return error_counter;
     }, new Map(this.characterArray.map(char => [char, 0]))),
     finalize(() => {
+      this.endTyping$.next();
+      this.finishedTyping.set(true);
+
       timer(200).subscribe(() => {
-        this.finishedTyping.set(true);
         this.confetti.addConfetti();
       });
       timer(5000).subscribe(() => {
@@ -69,8 +79,21 @@ export class MainAreaComponent implements OnInit, OnDestroy {
     }),
   );
 
+  // TYPING
+  typing$ = this.startTyping$.pipe(
+    concatMap(() => this.typingStream$),
+  );
+
+  // CLOCK
+  clock$ = this.startTyping$.pipe(
+    concatMap(() => interval(10).pipe(
+      map(value => value + 1),
+      startWith(0),
+      takeUntil(this.endTyping$)
+    )),
+  );
+
   constructor() {
-    // TODO: computed / linkedSignal instead?
     effect(() => { // new text -> new character array
       let text = this.loadedText() ?? "";
       this.characterArray = [...text];
@@ -87,5 +110,13 @@ export class MainAreaComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.confetti.destroyCanvas();
+  }
+
+  /**
+   * Initializes typing session and immediately removes itself as event listener.
+   */
+  initTypingSession = () => {
+    this.startTyping$.next();
+    this.textareaElement()?.nativeElement.removeEventListener("input", this.initTypingSession)
   }
 }
