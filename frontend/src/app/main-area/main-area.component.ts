@@ -12,12 +12,15 @@ import { ConfettiService } from '../confetti/confetti.service';
   templateUrl: './main-area.component.html',
   styleUrl: './main-area.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: {
+  host: { // TODO: improve layout for small screens
     class: `
       overflow-scroll no-scrollbar
       relative bg-light rounded-xl p-2
-      col-start-3 col-span-2 row-span-5
       border-5 border-double border-secondary
+
+      col-span-full row-span-3 row-start-1
+      md:col-start-2 md:col-span-4 md:row-span-5
+      lg:col-start-3 lg:col-span-2 lg:row-span-5
     `,
     "[style.fontFamily]": "'Roboto Mono'",
   }

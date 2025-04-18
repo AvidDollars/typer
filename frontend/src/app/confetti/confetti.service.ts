@@ -9,6 +9,6 @@ export class ConfettiService {
   #confetti = new JSConfetti();
 
   celebrate() {
-    this.#confetti.addConfetti();
+    this.#confetti.addConfetti(); // TODO: lagging on mobile device. Add less confetti?
   }
 }
