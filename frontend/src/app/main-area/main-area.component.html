@@ -1,14 +1,18 @@
 <!-- INIT TEXTAREA -->
 {{ initTextarea$ | async }}
 
+<!-- ADDS CONFETTI AT THE END OF TYPING SESSION -->
+{{ celebrateFinish$ | async }}
+
 <!-- CLOCK -->
 <p class="absolute bottom-0">clock: {{ clock$ | async }}</p>
 
 <!-- VARIABLES -->
 @let error = textLoaderService.error();
 @let isLoading = textLoaderService.isLoading$ | async;
+@let typingStream$ = typing$ | async;
+@let isFinished = sessionFinished$ | async;
 @let statusCSS = "text-3xl centered-content";
-@let finished = finishedTyping();
 
 <!-- HTML -->
 @if (isLoading) {
@@ -19,8 +23,13 @@
   <p [class]="statusCSS">error...</p>
 }
 
-@else if (finished) {
-  <p [class]="statusCSS">show stats after the session</p>
+@else if (isFinished) {
+  <!--
+  <p [class]="statusCSS"></p>
+  -->
+  @for (results of typingStream$?.results; track $index) {
+    <p>{{ results }}</p>
+  }
 }
 
 @else {
@@ -35,7 +44,7 @@
     class="p-2 border-0 absolute top-0 left-0 w-full outline-none resize-none no-scrollbar"
     spellcheck="false"
     autofocus
-    [disabled]="finishedTyping()"
+    [disabled]="isFinished"
     [style.height.px]="textElement.getBoundingClientRect().height"
   ></textarea>
 }
