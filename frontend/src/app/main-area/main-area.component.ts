@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { filter, map, scan, takeWhile, finalize, timer, interval, Subject, fromEvent, takeUntil, startWith, concatMap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { TextLoaderService } from './text-loader.service';
 import { discardIrrelevantKeys, extractKey } from './utils';
-import JSConfetti from 'js-confetti';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { ConfettiService } from '../confetti/confetti.service';
 
 @Component({
   selector: 'app-main-area',
@@ -22,11 +22,9 @@ import { toObservable } from '@angular/core/rxjs-interop';
     "[style.fontFamily]": "'Roboto Mono'",
   }
 })
-export class MainAreaComponent implements OnInit, OnDestroy {
+export class MainAreaComponent implements OnInit {
 
-  // TODO: create confetti service
-  confetti = new JSConfetti(); // confetti at the end of typing session
-
+  confettiService = inject(ConfettiService); // confetti at the end of typing session
   textLoaderService = inject(TextLoaderService);
   loadedText = this.textLoaderService.text;
   characterArray: string[] = [];
@@ -71,11 +69,8 @@ export class MainAreaComponent implements OnInit, OnDestroy {
       this.finishedTyping.set(true);
 
       timer(200).subscribe(() => {
-        this.confetti.addConfetti();
+        this.confettiService.celebrate();
       });
-      timer(5000).subscribe(() => {
-        this.confetti.destroyCanvas();
-      })
     }),
   );
 
@@ -106,10 +101,6 @@ export class MainAreaComponent implements OnInit, OnDestroy {
 
     // TODO: autoscrolling
     //interval(50).pipe(delay(2_000)).subscribe(val => this.host.scrollTo({top: val / 5, behavior: "smooth"}))
-  }
-
-  ngOnDestroy() {
-    this.confetti.destroyCanvas();
   }
 
   /**

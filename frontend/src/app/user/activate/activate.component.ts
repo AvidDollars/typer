@@ -7,6 +7,7 @@ import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, concatMap, map, of } from 'rxjs';
 import JSConfetti from 'js-confetti'
+import { ConfettiService } from '../../confetti/confetti.service';
 
 @Component({
   selector: 'app-activate',
@@ -30,7 +31,7 @@ export class ActivateComponent {
 
   http = inject(HttpClient);
   activatedRoute = inject(ActivatedRoute);
-  confetti = new JSConfetti();
+  confettiService = inject(ConfettiService);
 
   serverResponse$ = this.activatedRoute.paramMap.pipe(
     map(paramMap => paramMap.get("token")!), // presence of token is guaranteed
@@ -38,7 +39,7 @@ export class ActivateComponent {
     concatMap(
       url => this.http.get<{ message: string }>(url).pipe(
         map(messageObj => {
-          this.confetti.addConfetti(); // confetti explosion if successful account activation
+          this.confettiService.celebrate(); // confetti explosion if successful account activation
           return { detail: messageObj.message, activated: true } as ActivationResult;
         }),
         catchError(
