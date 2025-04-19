@@ -1,7 +1,9 @@
 from datetime import datetime
+from decimal import Decimal
 
 from pydantic import UUID4
 from sqlalchemy import Column
+from sqlalchemy import Float
 from sqlalchemy import JSON
 from sqlmodel import SQLModel, Field
 
@@ -9,7 +11,7 @@ from utils import uuid4_bugfix
 
 
 class TypingSessionBase(SQLModel):
-    duration_in_seconds: int = Field(nullable=False)
+    duration_in_miliseconds: int = Field(nullable=False)
     text_id: UUID4 = Field(foreign_key="texts.id", nullable=False)
     stats: dict = Field(sa_column=Column(JSON), nullable=False)  # TODO: created more explicit model for stats
 
