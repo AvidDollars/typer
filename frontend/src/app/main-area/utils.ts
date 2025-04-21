@@ -50,17 +50,14 @@ export class SessionState {
     const keyIsBackspace = key === "Backspace";
     let index = (keyIsBackspace) ? --this.#index : ++this.#index;
     this.#index = (index < 0) ? -1 : index; // min index: -1
+    const correctKey = this.#charArray[index];
+    const enterOnEndOfLine = key === "Enter" && correctKey === " "; // It may happen that there is " " at the end of line.
 
-    if (this.#index <= -1) {
+    if (this.#index < -1 || enterOnEndOfLine) {
       return this;
     };
 
-    // It may happen that there is " " at the end of line.
-    if (key === "Enter" && this.#charArray[index] === " ") {
-      return this;
-    };
-
-    if (key !== this.#charArray[index] && !keyIsBackspace) {
+    if (key !== correctKey && !keyIsBackspace) {
       this.#updateErrors(key, index);
       return this;
     };
