@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnInit, viewChild } from '@angular/core';
 import { filter, map, scan, takeWhile, finalize, interval, Subject, fromEvent, takeUntil, startWith, concatMap, tap } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { TextLoaderService } from './text-loader.service';
 import { discardIrrelevantKeys, extractKey, SessionState } from './utils';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ConfettiService } from '../confetti/confetti.service';
+import { ClockPipe } from '../clock/clock.pipe';
 
 @Component({
   selector: 'app-main-area',
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, ClockPipe],
   templateUrl: './main-area.component.html',
   styleUrl: './main-area.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,6 +34,7 @@ export class MainAreaComponent implements OnInit {
   textLoaderService = inject(TextLoaderService);
   loadedText = this.textLoaderService.text;
   sessionState = new SessionState();
+  activeTypoos = this.sessionState.activeTypoos;
   hostElement = inject(ElementRef).nativeElement as HTMLElement;
   textareaElement = viewChild<ElementRef<HTMLTextAreaElement>>("textarea");
 
@@ -62,9 +64,12 @@ export class MainAreaComponent implements OnInit {
 
   // TYPING SESSION TRIGGERS
   startTyping$ = new Subject<void>();
-  sessionFinished$ = new Subject<boolean>();
+  sessionFinished$ = new Subject<any>();
   celebrateFinish$ = this.sessionFinished$.pipe(
-    tap(() => this.confettiService.celebrate())
+    filter(Boolean),
+    tap(v => console.log(v)),
+    tap(() => this.confettiService.celebrate()),
+    // TODO: concatMap(sessionService.saveSession)
   );
 
   /**
@@ -72,6 +77,7 @@ export class MainAreaComponent implements OnInit {
    */
   initTypingSession = () => {
     this.startTyping$.next();
+    this.sessionState.markStart();
     this.textareaElement()?.nativeElement.removeEventListener("input", this.initTypingSession);
   }
 
@@ -83,7 +89,7 @@ export class MainAreaComponent implements OnInit {
     map(extractKey),
     scan((state, char) => state.updateState(char), this.sessionState),
     takeWhile(state => !state.isFinished),
-    finalize(() => this.sessionFinished$.next(true)),
+    finalize(() => this.sessionFinished$.next(this.sessionState.results)),
   );
 
   // CLOCK

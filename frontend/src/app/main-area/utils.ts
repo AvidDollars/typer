@@ -3,7 +3,12 @@
  */
 export function discardIrrelevantKeys(event: KeyboardEvent): boolean {
   const { key } = event;
-  return key.length === 1 || key === "Backspace";
+
+  return (
+    key.length === 1 ||
+    key === "Backspace" ||
+    key === "Enter"
+  );
 }
 
 export function extractKey(event: KeyboardEvent): string {
@@ -11,32 +16,58 @@ export function extractKey(event: KeyboardEvent): string {
 }
 
 /**
- * The state of typing session. To be used in "scan" operator to update of typing stream.
+ * The state of typing session. To be used in "scan" operator to update typing stream.
  */
 export class SessionState {
+
+  activeTypoos = new Map<number, string>(); // Map<index, invalidChar>
   #index = -1;
   #charArray: string[] = [];
-  #errors: Map<string, number> = new Map();
+  #startTime = 0; // timestamp in miliseconds
 
-  /** TODO: nested errors:
-   * errs = {
+  /**
+   * #errors = {
    *    char_a: { char_b: <mistakes_count>, char_c: <mistakes_count> },
    *    char_x: { char_c: <mistakes_count>, char_d: <mistakes_count> },
    * }
    */
-  //errors: Map<string, Map<string, number>> = new Map();
+  #errors: Map<string, Map<string, number>> = new Map();
 
-  loadText(rawText: string) {
+  markStart(): void {
+    if (this.#startTime !== 0) {
+      console.warn("Start of the typing session is already set to non-zero value.");
+    }
+    this.#startTime = new Date().getTime();
+  }
+
+  loadText(rawText: string): void {
     this.#charArray = [...rawText];
-    this.#errors = new Map(this.#charArray.map(char => [char, 0]));
+    this.#errors = new Map(this.#charArray.map(char => [char, new Map()]));
   }
 
   // ENTRY POINT:
   updateState(key: string): SessionState {
-    let index = (key === "Backspace") ? --this.#index : ++this.#index;
+    const keyIsBackspace = key === "Backspace";
+    let index = (keyIsBackspace) ? --this.#index : ++this.#index;
     this.#index = (index < 0) ? -1 : index; // min index: -1
-    if (this.#index <= -1) return this;
-    if (key !== this.#charArray[index]) this.#updateErrors(key, index);
+
+    if (this.#index <= -1) {
+      return this;
+    };
+
+    // It may happen that there is " " at the end of line.
+    if (key === "Enter" && this.#charArray[index] === " ") {
+      return this;
+    };
+
+    if (key !== this.#charArray[index] && !keyIsBackspace) {
+      this.#updateErrors(key, index);
+      return this;
+    };
+
+    // delete active typoos
+    const indexToDel = (keyIsBackspace) ? index + 1 : index;
+    this.activeTypoos.delete(indexToDel);
     return this;
   }
 
@@ -46,15 +77,24 @@ export class SessionState {
 
   // FINAL RESULTS
   get results() {
-    return this.#errors;
+    const endTime = new Date().getTime();
+    const elapsedMs = endTime - this.#startTime;
+
+    // only keys with mistakes are included
+    const mistakes = new Map(
+      [...this.#errors].filter(([_key, mistakes]) => mistakes.size > 0),
+    );
+
+    return { mistakes, elapsedMs };
   }
 
+  /**
+   * Updates "active typoos" and "errors stats" Map objects when an incorrect key is pressed.
+   */
   #updateErrors(key: string, index: number): void {
+    this.activeTypoos.set(index, key);
     const correctChar = this.#charArray[index];
-    const isCorrectKey = (key === correctChar);
-
-    if (!isCorrectKey && key !== "Backspace") {
-      this.#errors.set(correctChar, (this.#errors.get(correctChar) ?? 0) + 1);
-    };
+    const charMap = this.#errors.get(correctChar) ?? new Map<string, number>();
+    charMap.set(key, (charMap.get(key) ?? 0) + 1);
   }
 }

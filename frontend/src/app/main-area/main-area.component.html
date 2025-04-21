@@ -5,14 +5,16 @@
 {{ celebrateFinish$ | async }}
 
 <!-- CLOCK -->
-<p class="absolute bottom-0">clock: {{ clock$ | async }}</p>
+<p class="absolute bottom-0">clock: {{ clock$ | async | clock }}</p>
 
 <!-- VARIABLES -->
+@let text = loadedText();
 @let error = textLoaderService.error();
 @let isLoading = textLoaderService.isLoading$ | async;
 @let typingStream$ = typing$ | async;
 @let isFinished = sessionFinished$ | async;
 @let statusCSS = "text-3xl centered-content";
+
 
 <!-- HTML -->
 @if (isLoading) {
@@ -24,27 +26,24 @@
 }
 
 @else if (isFinished) {
-  <!--
-  <p [class]="statusCSS"></p>
-  -->
-  @for (results of typingStream$?.results; track $index) {
-    <p>{{ results }}</p>
-  }
+  <p [class]="statusCSS">show results in results component</p>
 }
 
 @else {
-  <p
-    #textElement
-    class="opacity-35"
+  <div
+    #charactersParent
     [style.min-height.px]="hostElement.getBoundingClientRect().height"
-  >{{ loadedText() }}</p>
+    class="opacity-50"
+  >
+    @for (char of text; track $index) {
+      <!-- use typoo in order to match background with the foreground text -->
+      @let typoo = activeTypoos.get($index);
+      <span [class]="{'bg-red-500': typoo}">{{ (typoo) ? typoo : char }}</span>
+    }
+  </div>
 
-  <textarea
-    #textarea
-    class="p-2 border-0 absolute top-0 left-0 w-full outline-none resize-none no-scrollbar"
-    spellcheck="false"
-    autofocus
-    [disabled]="isFinished"
-    [style.height.px]="textElement.getBoundingClientRect().height"
-  ></textarea>
+  <textarea #textarea class="p-2 border-0 absolute top-0 left-0 w-full outline-none resize-none no-scrollbar"
+    spellcheck="false" autofocus [disabled]="isFinished"
+    [style.height.px]="charactersParent.getBoundingClientRect().height">
+  </textarea>
 }
