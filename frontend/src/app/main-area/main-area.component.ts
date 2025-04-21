@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnInit, viewChild } from '@angular/core';
 import { filter, map, scan, takeWhile, finalize, interval, Subject, fromEvent, takeUntil, startWith, concatMap, tap } from 'rxjs';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { TextLoaderService } from './text-loader.service';
 import { discardIrrelevantKeys, extractKey, SessionState } from './utils';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -59,6 +59,7 @@ export class MainAreaComponent implements OnInit {
       const element = textarea.nativeElement;
       element.focus(); // to retrieve lost focus on textarea when going to a different page
       element.addEventListener("input", this.initTypingSession); // triggers "typing$" and "clock$"
+      element.textContent = ""; // TODO: there is for some reason 2 empty spaces present
     }),
   );
 
