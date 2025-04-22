@@ -6,6 +6,8 @@ import { discardIrrelevantKeys, extractKey, SessionState } from './utils';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { ConfettiService } from '../confetti/confetti.service';
 import { ClockPipe } from '../clock/clock.pipe';
+import { SessionService } from '../session/session.service';
+import { Session } from '../session/models';
 
 @Component({
   selector: 'app-main-area',
@@ -32,8 +34,12 @@ export class MainAreaComponent implements OnInit {
 
   confettiService = inject(ConfettiService); // confetti at the end of typing session
   textLoaderService = inject(TextLoaderService);
+
   loadedText = this.textLoaderService.text;
+  loadedTextId = this.textLoaderService.textId;
+
   sessionState = new SessionState();
+  sessionService = inject(SessionService);
   activeTypoos = this.sessionState.activeTypoos;
   hostElement = inject(ElementRef).nativeElement as HTMLElement;
   textareaElement = viewChild<ElementRef<HTMLTextAreaElement>>("textarea");
@@ -41,8 +47,9 @@ export class MainAreaComponent implements OnInit {
   constructor() {
     // TODO: try to create better solution which does not involve using "effect"
     effect(() => { // new text -> new character array
-      let text = this.loadedText() ?? "";
-      this.sessionState.loadText(text);
+      const text = this.loadedText() ?? "";
+      const textId = this.loadedTextId() ?? "";
+      this.sessionState.loadText(text, textId);
     });
   }
 
@@ -65,12 +72,11 @@ export class MainAreaComponent implements OnInit {
 
   // TYPING SESSION TRIGGERS
   startTyping$ = new Subject<void>();
-  sessionFinished$ = new Subject<any>();
-  celebrateFinish$ = this.sessionFinished$.pipe(
+  sessionFinished$ = new Subject<Session>();
+  onSessionFinished$ = this.sessionFinished$.pipe(
     filter(Boolean),
-    tap(v => console.log(v)),
+    concatMap(session => this.sessionService.saveSession$(session)),
     tap(() => this.confettiService.celebrate()),
-    // TODO: concatMap(sessionService.saveSession)
   );
 
   /**

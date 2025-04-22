@@ -12,7 +12,7 @@ export type TypingStats = Map<string, Map<string, number>>;
 export interface Session {
   duration_in_miliseconds: number;
   text_id: string;
-  stats: TypingStats;
+  stats: object;
 }
 
 export interface SaveSessionResult {

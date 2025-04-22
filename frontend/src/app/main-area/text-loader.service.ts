@@ -14,7 +14,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 })
 export class TextLoaderService {
 
-  private textId = signal(environment.defaultTextId);
+  textId = signal(environment.defaultTextId);
   private url = computed(() => environment.text(this.textId()));
   private textResource = httpResource<Text>(() => this.url()); // TODO: maybe use rxResource instead?
 

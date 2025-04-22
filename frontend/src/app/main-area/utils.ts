@@ -1,3 +1,5 @@
+import { Session, TypingStats } from "../session/models";
+
 /**
  * ingores "Shift, Caps lock, etc..." and negative indices
  */
@@ -24,14 +26,8 @@ export class SessionState {
   #index = -1;
   #charArray: string[] = [];
   #startTime = 0; // timestamp in miliseconds
-
-  /**
-   * #errors = {
-   *    char_a: { char_b: <mistakes_count>, char_c: <mistakes_count> },
-   *    char_x: { char_c: <mistakes_count>, char_d: <mistakes_count> },
-   * }
-   */
-  #errors: Map<string, Map<string, number>> = new Map();
+  #textId = "";
+  #errors: TypingStats = new Map();
 
   markStart(): void {
     if (this.#startTime !== 0) {
@@ -40,9 +36,10 @@ export class SessionState {
     this.#startTime = new Date().getTime();
   }
 
-  loadText(rawText: string): void {
+  loadText(rawText: string, textId: string): void {
     this.#charArray = [...rawText];
     this.#errors = new Map(this.#charArray.map(char => [char, new Map()]));
+    this.#textId = textId;
   }
 
   // ENTRY POINT:
@@ -73,16 +70,19 @@ export class SessionState {
   }
 
   // FINAL RESULTS
-  get results() {
+  get results(): Session {
     const endTime = new Date().getTime();
-    const elapsedMs = endTime - this.#startTime;
+    const duration_in_miliseconds = endTime - this.#startTime;
 
+    // Object.fromEntries(...) -> stats must be valid JS object in order to send it to the backend.
     // only keys with mistakes are included
-    const mistakes = new Map(
-      [...this.#errors].filter(([_key, mistakes]) => mistakes.size > 0),
+    const errors = new Map(
+      [...this.#errors]
+        .filter(([_key, mistakes]) => mistakes.size > 0)
+        .map(([key, mistakes]) => [key, Object.fromEntries(mistakes)])
     );
 
-    return { mistakes, elapsedMs };
+    return { duration_in_miliseconds, text_id: this.#textId, stats: Object.fromEntries(errors) };
   }
 
   /**

@@ -1,8 +1,11 @@
 <!-- INIT TEXTAREA -->
 {{ initTextarea$ | async }}
 
-<!-- ADDS CONFETTI AT THE END OF TYPING SESSION -->
-{{ celebrateFinish$ | async }}
+<!-- TYPING STREAM -->
+@let typingStream = typing$ | async;
+
+<!-- ADDS CONFETTI AT THE END OF TYPING SESSION + SAVES SESSION -->
+@let saveSessionResult = onSessionFinished$ | async;
 
 <!-- CLOCK -->
 <p class="absolute bottom-0">clock: {{ clock$ | async | clock }}</p>
@@ -11,7 +14,6 @@
 @let text = loadedText();
 @let error = textLoaderService.error();
 @let isLoading = textLoaderService.isLoading$ | async;
-@let typingStream$ = typing$ | async;
 @let isFinished = sessionFinished$ | async;
 @let statusCSS = "text-3xl centered-content";
 
