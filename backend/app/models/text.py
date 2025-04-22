@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import UUID4
+from pydantic import validator, UUID4
 from sqlalchemy import Column, TEXT
 from sqlmodel import SQLModel, Field
 
@@ -29,6 +29,7 @@ class TextDb(TextIn, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     added_by: UUID4 = Field(foreign_key="users.id", nullable=False)
     is_public: bool = False
+    characters_count: int # TODO: computed value after upgrading to Pydantic V2
 
 
 class TextOut(TextDb):
