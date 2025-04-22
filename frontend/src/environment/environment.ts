@@ -28,5 +28,9 @@ export const environment = {
       //shortest: bb461796-fe3c-4258-87ed-a3d9e4820f7a
       //normal len: f9556879-8ddb-493f-a256-1c59c4b0a523
       return "bb461796-fe3c-4258-87ed-a3d9e4820f7a";
+    },
+
+    get saveSessionUrl(): string {
+      return this.route(`typing-sessions`)
     }
 }
