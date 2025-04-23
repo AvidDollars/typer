@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 
 from utils.auto_repr_util import auto_repr
-
+import json
 
 @auto_repr
 class Database:
@@ -14,7 +14,8 @@ class Database:
         self._engine = create_async_engine(
             db_url,
             echo=True if self.environment == "development" else False,
-            future=True
+            future=True,
+            json_serializer=lambda obj: json.dumps(obj, ensure_ascii=False)
         )
 
     async def initialize(self):
