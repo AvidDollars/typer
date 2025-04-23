@@ -8,7 +8,7 @@ from routers import router
 
 __all__ = "create_app",
 
-
+# TODO: CORS for DEV/PROD ENVS
 def create_app() -> FastAPI:
     container = Container()
     config = container.config()
