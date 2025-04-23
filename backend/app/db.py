@@ -15,7 +15,8 @@ class Database:
             db_url,
             echo=True if self.environment == "development" else False,
             future=True,
-            json_serializer=lambda obj: json.dumps(obj, ensure_ascii=False)
+            # for avoiding escaping non-ASCII characters in typing stats ("typing_sessions" table, "stats" column):
+            json_serializer=lambda obj: json.dumps(obj, ensure_ascii=False) 
         )
 
     async def initialize(self):

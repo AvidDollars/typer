@@ -13,6 +13,9 @@ export interface Session {
   duration_in_miliseconds: number;
   text_id: string;
   stats: object;
+  gross_wpm: number;
+  net_wpm: number;
+  accuracy: number;
 }
 
 export interface SaveSessionResult {

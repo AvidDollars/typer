@@ -28,6 +28,7 @@ export class SessionState {
   #startTime = 0; // timestamp in miliseconds
   #textId = "";
   #errors: TypingStats = new Map();
+  #errorCounter = 0;
 
   markStart(): void {
     if (this.#startTime !== 0) {
@@ -73,6 +74,7 @@ export class SessionState {
   get results(): Session {
     const endTime = new Date().getTime();
     const duration_in_miliseconds = endTime - this.#startTime;
+    const durationInMinutes = duration_in_miliseconds / 1000 / 60;
 
     // Object.fromEntries(...) -> stats must be valid JS object in order to send it to the backend.
     // only keys with mistakes are included
@@ -82,7 +84,16 @@ export class SessionState {
         .map(([key, mistakes]) => [key, Object.fromEntries(mistakes)])
     );
 
-    return { duration_in_miliseconds, text_id: this.#textId, stats: Object.fromEntries(errors) };
+    const gross_wpm = this.#gross_words_per_minute(durationInMinutes);
+
+    return {
+      duration_in_miliseconds,
+      text_id: this.#textId,
+      stats: Object.fromEntries(errors),
+      gross_wpm,
+      net_wpm: this.#net_words_per_minute(durationInMinutes, gross_wpm),
+      accuracy: this.#accuracy_percent(),
+    };
   }
 
   /**
@@ -93,5 +104,27 @@ export class SessionState {
     const correctChar = this.#charArray[index];
     const charMap = this.#errors.get(correctChar) ?? new Map<string, number>();
     charMap.set(key, (charMap.get(key) ?? 0) + 1);
+    this.#errorCounter++;
+  }
+
+  /**
+   * (all_typed_entries / 5 ) / time_in_minutes
+   */
+  #gross_words_per_minute(durationMinutes: number): number {
+    return ((this.#charArray.length + this.#errorCounter) / 5) / durationMinutes;
+  }
+
+  /**
+   * gross_wpm - (uncorrected_errors / time_in_minutes)
+   */
+  #net_words_per_minute(durationMinutes: number, gross_wpm: number): number {
+    return gross_wpm - (this.activeTypoos.size / durationMinutes);
+  }
+
+  #accuracy_percent(): number {
+    const charCount = this.#charArray.length;
+    const correctEntries = charCount - this.#errorCounter;
+    const allEntries = charCount + this.#errorCounter;
+    return (correctEntries / allEntries) * 100;
   }
 }
