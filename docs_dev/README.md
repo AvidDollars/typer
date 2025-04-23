@@ -75,3 +75,25 @@ Last migration was not successful - no changes propagated to DB.
 ![change version num](03_update_db.png)
 
 3. save changes in DB (press **F6** in **pgAdmin**) and delete last migration file which was automatically generated
+
+## Add new 'not null' fields to an existing model:
+
+**Task**:
+You need to create new **not null** fields, but migration cannot be applied due to the following error:
+```bash
+sqlalchemy.exc.IntegrityError: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.NotNullViolationError'>: column "gross_wpm" of relation "typing_sessions" contains null values
+```
+
+**Solution**:
+1. add new fields without **not null** constraint:
+![new nullable fields](04_add_new_fields.png)
+
+2. create a new revision and run 1st migration (see **step 3** in **Modifying database schema / running migrations**)
+
+3. set **null** fields to actual values:
+```sql
+update typing_sessions set gross_wpm=0, net_wpm=0, accuracy=0
+``` 
+
+4. update fields and run second migration:
+![new not null fields](04_add_not_null.png)
