@@ -114,6 +114,7 @@ export class SessionState {
     return ((this.#charArray.length + this.#errorCounter) / 5) / durationMinutes;
   }
 
+  // TODO: high error rate -> negative value
   /**
    * gross_wpm - (uncorrected_errors / time_in_minutes)
    */

@@ -18,8 +18,9 @@
     --secondary-color: rgb(112, 112, 34);
     --secondary-color-dark: rgb(58, 58, 17);
 
-    --color-invalid: rgb(211, 75, 75);
+    --color-invalid: rgb(228, 89, 89);
     --color-valid: rgb(66, 153, 45);
+    --color-invisible-typoo: rgb(0, 0, 0);
   }
 
   [data-theme="light"] {
@@ -38,8 +39,9 @@
     --secondary-color-dark: rgb(85, 85, 28);
     --secondary-color-light: rgb(160, 160, 77);
 
-    --color-invalid: rgb(214, 109, 109);
+    --color-invalid: rgb(209, 68, 68);
     --color-valid: rgb(63, 194, 63);
+    --color-invisible-typoo: rgb(255, 255, 255);
   }
 
   [data-theme="blues"] {
@@ -58,7 +60,7 @@
     --secondary-color-dark: rgb(59, 109, 53);
     --secondary-color-light: rgb(154, 206, 147);
 
-    --color-invalid: rgb(214, 109, 109);
+    --color-invalid: rgb(209, 157, 177);
     --color-valid: rgb(63, 194, 63);
   }
 
@@ -89,6 +91,7 @@
 
   --color-light: var(--bg-color-light);
   --color-text: var(--text-color);
+  --color-invisible-typoo: var(--color-invisible-typoo); // if typoo is "space" / "enter
 }
 
 // FOR SUBMITTING FORMS
