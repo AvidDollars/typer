@@ -12,6 +12,6 @@ RUN pip install --upgrade pip && pip install -r ./requirements.txt
 
 WORKDIR /backend/app
 
-ENTRYPOINT [ "uvicorn", "main:app" ]
+ENTRYPOINT [ "uvicorn", "main:app", "--ssl-keyfile", "/shared/dev_key.pem", "--ssl-certfile", "/shared/dev_cert.pem" ]
 
 CMD [ "--host=0.0.0.0", "--reload" ]

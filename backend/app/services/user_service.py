@@ -37,10 +37,10 @@ class UserService:
 
         if self._login_approved(user, user_db, exception_if_password_mismatch=InvalidCredentialsException):
 
-            return self.jwt_token.encode({
-                "role": user_db.role,
-                "id": str(user_db.id)  # TODO: custom JSONEncoder?
-            })
+            return self.jwt_token.access_token(
+                role=user_db.role,
+                id=str(user_db.id),  # TODO: custom JSONEncoder?
+            )
 
     # ↓↓↓ HELPER METHODS ↓↓↓
     async def _get_user_from_db(self, user: UserLogin):

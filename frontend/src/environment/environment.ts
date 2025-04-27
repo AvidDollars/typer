@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    BACKEND_BASE_URL: "http://localhost:8000",
+    BACKEND_BASE_URL: "https://localhost:8000",
 
     route(path: string): string {
         return `${this.BACKEND_BASE_URL}/${path}`;

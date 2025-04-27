@@ -1,3 +1,4 @@
+from logging import Logger
 from os import path
 
 from dependency_injector.containers import DeclarativeContainer, WiringConfiguration
@@ -30,7 +31,7 @@ class Container(DeclarativeContainer):
     config = Configuration(yaml_files=[path.join(APP_DIR, CONFIG_FILE_NAME)])
 
     # LOGGER
-    logger = Resource(
+    logger: Logger = Resource(
         get_logger,
         level=config.logging["level"],
         fmt=config.logging["format"],
@@ -81,7 +82,9 @@ class Container(DeclarativeContainer):
         JwtToken,
         secret=config.secret,
         token_expiration=config.jwt_token_expiration_in_hours,
-        jwt_algorithm=config.jwt_algorithm
+        safe_token_expiration=config.jwt_safe_token_expiration_in_hours,
+        jwt_algorithm=config.jwt_algorithm,
+        logger=logger,
     )
 
     user_service = Factory(

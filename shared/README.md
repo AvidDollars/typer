@@ -1,0 +1,1 @@
+# Folder for sharing common functionality/items for the whole project.

@@ -28,6 +28,7 @@ services:
     volumes:
       - typer-backend-logs:/logs
       - ${PWD}/backend:/backend
+      - ${PWD}/shared:/shared
     env_file:
       - .env.dev
     depends_on:
@@ -41,6 +42,7 @@ services:
       - "4200:4200"
     volumes:
       - ${PWD}/frontend:/app
+      - ${PWD}/shared:/shared
     depends_on:
       - backend
 

@@ -16,7 +16,7 @@ export class TextLoaderService {
 
   textId = signal(environment.defaultTextId);
   private url = computed(() => environment.text(this.textId()));
-  private textResource = httpResource<Text>(() => this.url()); // TODO: maybe use rxResource instead?
+  private textResource = httpResource<Text>(() => this.url());
 
   text = computed(() => this.textResource.value()?.content);
   isLoading$ = toObservable(this.textResource.isLoading);

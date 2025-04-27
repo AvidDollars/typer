@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
+from logging import Logger
 
 import jwt
 from fastapi.requests import Request
@@ -27,16 +28,28 @@ class JwtToken:
     def __init__(
             self, *,
             secret: str,
-            token_expiration: int,
+            token_expiration: float,
+            safe_token_expiration: float,
             jwt_algorithm: str,
+            logger: Logger,
     ):
         self.secret = secret
         self.token_expiration_in_hours = token_expiration
+        self.safe_token_expiration_in_hours = safe_token_expiration
         self.jwt_algorithm = jwt_algorithm
+        self.logger = logger
 
-    def encode(self, payload: dict):
-        expires_at = datetime.utcnow() + timedelta(hours=self.token_expiration_in_hours)
-        payload = dict(payload, exp=expires_at)
+    def access_token(self, *, role: str, id: str):
+        return self._encode({"role": role, "id": id}, expiration_in_hours=self.token_expiration_in_hours, is_secure=True)
+
+    def refresh_token(self):
+        return self._encode(expiration_in_hours=self.safe_token_expiration_in_hours)
+
+    def _encode(self, payload: dict, *, expiration_in_hours: float, is_secure = False):
+        expires_at = datetime.now(timezone.utc) + timedelta(hours=expiration_in_hours) 
+
+        # "isSecure": token can be used for sensitive operations only if it was initiated by login action:
+        payload = dict(payload, exp=expires_at, isSecure=is_secure)
         return jwt.encode(payload, self.secret, algorithm=self.jwt_algorithm)
 
     def decode(self, token: str):
@@ -48,7 +61,8 @@ class JwtToken:
             else:
                 return decoded_token
 
-        except jwt.InvalidTokenError:
+        except jwt.InvalidTokenError as error:
+            self.logger.error(f"JWT token couldn't be decoded. Error: ${error}")
             raise InvalidTokenException
 
 
