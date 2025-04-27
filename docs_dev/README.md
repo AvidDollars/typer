@@ -46,6 +46,8 @@ docker exec -it 769 bash
 ```
 
 3. run migration:
+> [!TIP]  
+> Always check generated migration file before running it.
 ```bash
 # you must be inside "/backend" folder in order to run alembic commands:
 cd /backend
@@ -53,8 +55,6 @@ cd /backend
 # create new revision and provide description, e.g.:
 alembic revision --autogenerate -m "add 'unique name' constraint on 'users' table"
 
-> [!TIP]  
-> Always check generated migration file before running it.
 # run the migration:
 alembic upgrade head
 ```
