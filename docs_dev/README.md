@@ -53,6 +53,8 @@ cd /backend
 # create new revision and provide description, e.g.:
 alembic revision --autogenerate -m "add 'unique name' constraint on 'users' table"
 
+> [!TIP]  
+> Always check generated migration file before running it.
 # run the migration:
 alembic upgrade head
 ```

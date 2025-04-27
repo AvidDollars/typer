@@ -58,6 +58,7 @@ class UserDb(UserIn, table=True):
     email_subscription: bool = True
     is_activated: bool = False
     activation_link: str = Field(default_factory=generate_registration_token)
+    refresh_token_hash: str | None = None # hash of decoded JWT refresh token
 
 
 class UserOut(UserBase):
