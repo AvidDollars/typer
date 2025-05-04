@@ -2,6 +2,7 @@ import re
 from datetime import datetime
 
 from pydantic import validator, BaseModel, UUID4
+from sqlalchemy import ARRAY, Column, String
 from sqlmodel import SQLModel, Field
 
 from .enums import UserRole
@@ -58,7 +59,9 @@ class UserDb(UserIn, table=True):
     email_subscription: bool = True
     is_activated: bool = False
     activation_link: str = Field(default_factory=generate_registration_token)
-    refresh_token_hash: str | None = None # hash of decoded JWT refresh token
+
+    # list of refresh token hashes -> to suppor refresh tokens on multiple devices
+    refresh_token_hashes: list[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
 
 
 class UserOut(UserBase):

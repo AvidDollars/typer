@@ -27,6 +27,10 @@ class TypingSessionDb(TypingSessionIn, table=True):
 
     id: UUID4 | None = Field(primary_key=True, nullable=False, index=True, default_factory=uuid4_bugfix)
     user_id: UUID4 = Field(foreign_key="users.id", nullable=False)
+
+    
+    # WILL RUN "ROLLBACK" COMMAND:
+    # created_at: datetime = Field(nullable=False, default_factory=utils.datetime_utc_now)
     created_at: datetime = Field(nullable=False, default_factory=datetime.now)
 
 
