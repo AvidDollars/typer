@@ -1,5 +1,5 @@
 from operator import methodcaller
-from typing import Literal
+from typing import Literal, TypeAlias
 
 from pydantic import UUID4
 from sqlalchemy import select, delete, update, and_
@@ -7,9 +7,13 @@ from sqlalchemy import select, delete, update, and_
 from db import Database
 from utils import Pagination
 
-__all__ = ("CrudOperations", )
+__all__ = ("CrudOperations", "RowsAffected")
 
 
+RowsAffected: TypeAlias = int
+
+
+# TODO: monitor "ROLLBACK" commands in order to prevent losing data
 class CrudOperations:
     """ class for generic CRUD operations """
 
@@ -58,7 +62,7 @@ class CrudOperations:
                 (await session.execute(statement)).scalars()
             )
 
-    async def update_resource(self, resource, *, resource_id: UUID4, _filter=None,  **fields_to_update):
+    async def update_resource(self, resource, *, resource_id: UUID4, _filter=None,  **fields_to_update) -> RowsAffected:
         resource_id_filter = resource.id == resource_id
 
         if _filter is None:
@@ -77,7 +81,7 @@ class CrudOperations:
             await session.commit()
             return result.rowcount
 
-    async def delete_resource(self, resource, *, filter_) -> int:
+    async def delete_resource(self, resource, *, filter_) -> RowsAffected:
         session = await self.db.get_session()
 
         async with session.begin():
@@ -88,7 +92,7 @@ class CrudOperations:
 
     # other operations
     # TODO -> make its own dedicated class for non-crud operations?
-    async def get_count(self, resource, *, filter_=None):  # TODO: probably can be optimized
+    async def get_count(self, resource, *, filter_=None) -> int:  # TODO: probably can be optimized
         session = await self.db.get_session()
 
         async with session.begin():
