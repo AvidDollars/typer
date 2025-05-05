@@ -10,7 +10,8 @@ export function authInterceptor(request: HttpRequest<unknown>, next: HttpHandler
 
   if (jwtService.tokenIsValid) {
     request = request.clone({
-      headers: request.headers.append("Authorization", `Bearer ${jwtService.getToken()!}`)
+      headers: request.headers.append("Authorization", `Bearer ${jwtService.getToken()!}`),
+      withCredentials: true, // cookies.refresh_token
     });
   }
 
