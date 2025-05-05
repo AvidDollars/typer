@@ -18,6 +18,7 @@ async def register_user(
         email_service: UserRegistrationEmailService = Depends(Provide[Container.user_registration_email_service]),
 ):
 
+    # TODO: store hash of activation link in the DB
     # activation_token is returned if unique constraint is not violated (name, email)
     activation_token = await user_service.register_user(user)
 

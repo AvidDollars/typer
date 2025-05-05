@@ -7,37 +7,34 @@ from fastapi.responses import Response
 from fastapi.requests import Request
 
 from containers import Container
-from custom_exceptions import MissingCredentialsException
-from models import UserLogin
-from services import UserService
+from custom_exceptions import NotAuthenticatedException
+from services import JwtToken
 from utils import refresh_token_cookies
 
 router = APIRouter(
-    prefix="/login", tags=["User"]
+    prefix="/refresh", tags=["User"]
 )
 
-
+ 
 @router.post("/")
 @inject
-async def login_user(
-        user: UserLogin,
-        response: Response,
-        request: Request,
-        user_service: UserService = Depends(Provide[Container.user_service]),
-        config = Depends(Provide[Container.config]),
-        logger: Logger = Depends(Provide[Container.logger]),
+async def new_token(
+    request: Request,
+    response: Response,
+    jwt_token_service: JwtToken = Depends(Provide[Container.jwt_token]),
+    logger: Logger = Depends(Provide[Container.logger]),
+    config = Depends(Provide[Container.config]),
 ):
-    """ Returns access token and creates/rotates refresh token. """
+    """ Gets refresh token from the cookies and creates new access token and rotates refesh token. """
 
-    missing_name_and_mail = user.name is None and user.email is None
-    missing_password = user.password is None
-
-    if missing_name_and_mail or missing_password:
-        raise MissingCredentialsException
-    
     refresh_token_key = "refresh_token"
-    current_refresh_token = request.cookies.get(refresh_token_key)
-    access_token, refresh_token = await user_service.login_user(user=user, refresh_token_in=current_refresh_token)
+    request_refresh_token = request.cookies.get(refresh_token_key)
+
+    if request_refresh_token is None:
+        logger.error("'POST /refresh' hit without provided refesh token in cookies.")
+        raise NotAuthenticatedException
+
+    access_token, refresh_token = await jwt_token_service.create_token_pair_from_refresh(encoded_refresh_token=request_refresh_token)
 
     if refresh_token is not None:
         try:

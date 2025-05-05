@@ -14,6 +14,7 @@ __all__ = "create_app",
 # TODO: CORS/SSL for DEV/PROD ENVS
 def create_app() -> FastAPI:
     container = Container()
+    container.init_resources()
     config = container.config()
 
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -24,12 +25,15 @@ def create_app() -> FastAPI:
     app.include_router(router)
     app.middleware("http")(log_server_errors)
     app.exception_handler(RequestValidationError)(validation_error_handler)
+
+    # config.get("environment", "production") -> DEV/PROD CORS
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=["https://localhost:4200"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        max_age=86_400 # cache preflight requests for 1 day
     )
     app.add_middleware(HTTPSRedirectMiddleware)
 
