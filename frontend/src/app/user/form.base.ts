@@ -1,7 +1,7 @@
 import { FormGroup } from "@angular/forms";
 import { ElementRef, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, finalize, map, Observable, of, timer, concatMap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, timer, timeout, throwError, switchMap } from 'rxjs';
 import { SubmissionResult, FormObject } from './models';
 import { throttledFormSubmit, retrieveErrorMessage } from "./shared";
 
@@ -35,7 +35,7 @@ export abstract class FormComponentBase<
   ) {
 
     this.submitAction$ = throttledFormSubmit(this.formElement, this.formGroup, this.formObject).pipe(
-      concatMap(this.trySendRequest)
+      switchMap(this.trySendRequest),
     );
   }
 
@@ -48,18 +48,20 @@ export abstract class FormComponentBase<
     timer(500).subscribe(() => this.submittedInvalidForm.set(false));
   }
 
+  // TODO: to be improved. Does not behave correctly 100%
   /**
    * Sends form data to the API. Returns "SubmissionResult" as an observable object.
    */
   trySendRequest = (): Observable<SubmissionResult> => {
     const server_responded_with_error = this.formObject.dataIsValid && this.formObject.dataUnchanged;
+    const allowResubmit = this.formObject.allowResubmit();
 
     if (!this.formObject.dataIsValid) {
       this.showErrMsgOnInvalidSubmit();
       return of({ state: "invalidForm", message: "some of the form fields are invalid!" });
     }
 
-    else if (server_responded_with_error) {
+    else if (server_responded_with_error && !allowResubmit) {
       return of({ state: "submitFailed", message: this.serverResponse });
     }
 
@@ -67,17 +69,21 @@ export abstract class FormComponentBase<
     else {
       this.requestActive.set(true);
 
-      return this.http.post<Res>(this.formUrl, this.formObject.outData)
+      return this.http.post<Res>(this.formUrl, this.formObject.outData, { withCredentials: true })
         .pipe(
+          timeout({ // TODO: maybe increment timeout value for the following submissions?
+            each: 5_000,
+            with: () => throwError(() => new HttpErrorResponse({ error: "Timeout. Please try again.", status: 500 }))
+          }),
           map(value => {
             this.formGroup.reset();
             this.responseHandler?.(value); // response data handler (e.g. handling JWT token for /login)
-
             return { state: "submitOk", message: this.successMessage } as SubmissionResult;
           }),
           catchError((err: HttpErrorResponse) => {
             const message = retrieveErrorMessage(err);
             this.serverResponse = message;
+            if (err.status === 500) this.formObject.allowResubmit.set(true); // otherwise unchanged data would prevent from re-submission
             return of<SubmissionResult>({ state: "submitFailed", message });
           }),
           finalize(() => {

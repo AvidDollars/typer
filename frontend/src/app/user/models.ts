@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 /**
  * Module contains commmon models for /activate, /login and /register endpoints
  */
@@ -22,9 +23,9 @@ export interface ActivationResult {
  * Base class for /activate, /login and /register endpoints
  */
 export abstract class FormObject<Raw, Out> {
-
   dataIsValid = false;
   dataUnchanged = false;
+  allowResubmit = signal(false); // to allow form re-submission if status_code === 500
 
   abstract rawData: Raw;
   abstract get outData(): Out; // takes raw data and creates an object to be sent in HTTP request
