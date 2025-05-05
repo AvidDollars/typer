@@ -1,4 +1,3 @@
-import { SubmissionResult } from './../models';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { form_styles } from '../shared';
 import { FormComponentBase } from '../form.base';
@@ -6,9 +5,7 @@ import { LoginFormDataRaw, LoginFormDataOut, LoginFormObject } from './models';
 import { environment } from '../../../environment/environment';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AsyncPipe } from '@angular/common';
-import { map, Observable, of, OperatorFunction, pipe, tap } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
-import { JwtTokenService } from '../../auth/jwt.token.service';
 
 @Component({
   selector: 'form.login',

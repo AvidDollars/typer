@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
+import { ValidatorFn, AbstractControl, FormGroup } from "@angular/forms";
 import { HttpErrorResponse } from '@angular/common/http';
 import { map, Observable, scan, fromEvent, throttleTime } from 'rxjs';
 import { FormObject } from './models';
@@ -51,18 +51,14 @@ export function mustBeEqual(fieldA: string, fieldB: string): ValidatorFn {
  * Extracts error message from the API.
  */
 export function retrieveErrorMessage(error: HttpErrorResponse): string {
-  const { error: err } = error
-  const extractedError = err.message ?? err.detail;
+  const serverError = "server error";
+  let extractedError = error?.error?.detail ?? error?.message ?? serverError;
 
-  if (typeof extractedError === "string") {
-    return extractedError;
-  } else {
-    // TODO: logging
-    const message = "unsuccessful action";
-    console.error(message);
-    console.error(error);
-    return message;
+  if (extractedError === serverError) {
+    console.error(`Couldn't retrieve error message. Fn called with the following argument: ${JSON.stringify(error)}`)
   }
+
+  return extractedError;
 }
 
 /**
