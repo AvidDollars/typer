@@ -60,7 +60,7 @@ class UserDb(UserIn, table=True):
     is_activated: bool = False
     activation_link: str = Field(default_factory=generate_registration_token)
 
-    # list of refresh token hashes -> to suppor refresh tokens on multiple devices
+    # TODO: probably could be removed after testing solution with "refresh_tokens" table
     refresh_token_hashes: list[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
 
 
