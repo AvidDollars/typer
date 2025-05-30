@@ -31,6 +31,10 @@ export const environment = {
     },
 
     get saveSessionUrl(): string {
-      return this.route(`typing-sessions`)
+      return this.route(`typing-sessions`);
+    },
+
+    get refreshUrl(): string {
+      return this.route("refresh");
     }
 }
