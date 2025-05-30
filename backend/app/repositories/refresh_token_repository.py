@@ -11,9 +11,11 @@ class RefreshTokenRepository(CrudOperations):
 
     def __init__(self, *, db: Database):
         super().__init__(db=db)
-
+ 
     async def store_refresh_token(self, *, refresh_token_hash: RefreshTokenDb) -> RowsAffected:
         """ To be used for login action. Simply appends new refresh token to an existing list of refresh tokens. """
+
+        # TODO: catch unique constraint
         return await self.create_resource(resource=refresh_token_hash)
 
     # TODO: soft delete?
