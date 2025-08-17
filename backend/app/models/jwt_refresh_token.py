@@ -6,7 +6,7 @@ from utils import uuid4_bugfix
 
 
 class RefreshTokenBase(SQLModel):
-    refresh_token_hash: str = Field(nullable=False)
+    refresh_token_hash: str = Field(nullable=False, sa_column_kwargs={"unique": True})
     user_id: UUID4 = Field(foreign_key="users.id", nullable=False)
     expires_in: datetime = Field(nullable=False)
 
