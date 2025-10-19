@@ -10,6 +10,6 @@ RUN npm install -g @angular/cli
 
 RUN npm install
 
-ENTRYPOINT [ "ng", "serve" ]
+ENTRYPOINT [ "ng", "serve", "--ssl", "true", "--ssl-key", "/shared/dev_key.pem", "--ssl-cert" ,"/shared/dev_cert.pem" ]
 
 CMD [ "--host", "0.0.0.0", "--open" ]

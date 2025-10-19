@@ -28,6 +28,7 @@ services:
     volumes:
       - typer-backend-logs:/logs
       - ${PWD}/backend:/backend
+      - ${PWD}/shared:/shared
     env_file:
       - .env.dev
     depends_on:
@@ -41,6 +42,8 @@ services:
       - "4200:4200"
     volumes:
       - ${PWD}/frontend:/app
+      - ${PWD}/shared:/shared
+      - /app/node_modules # bind-mounts would otherwise overwrite it
     depends_on:
       - backend
 

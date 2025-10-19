@@ -13,3 +13,6 @@ logs/
 # tests
 .pytest_cache/
 testing.db
+
+# certs
+*.pem
